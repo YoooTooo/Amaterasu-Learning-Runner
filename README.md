@@ -669,23 +669,26 @@ const stage = getStageByDistance(distance);
 
 ---
 
-# Temporary Stage Ideas
+# Final Stage Configuration
 
-現在の仮案：
+最終的なステージ構成：
 
-```text
-1. Shrine
-2. Mountain
-3. Hokusai-style Sea
-4. Amanohashidate
-5. Road to Mt. Fuji
-6. Kyoto
-7. Yomi
-```
+| Stage | Name | Start Distance | Background | Obstacles / Direction |
+| ---: | --- | ---: | --- | --- |
+| 1 | 神社 | 0 | `1.png` | 石灯籠・石・注連縄 |
+| 2 | 桜並木 | 700 | `2.png` | 落ちた枝・庭石・垂れ下がる桜の枝 |
+| 3 | 葛飾北斎の波 | 1600 | `3.png` | 抜けた橋板・桶・吊り提灯。巨大な波は背景演出 |
+| 4 | 富士山 | 2800 | `4-01.png`〜`4-02.png` | 岩・倒木・低い枝 |
+| 5 | 田舎のホラー | 4300 | `5-00.png`〜`5-14.png` | 地蔵・倒れた自転車・農具・垂れた竹 |
+| 6 | 京都 | 6200 | `6.png` | 荷車・木箱・桶・暖簾 |
+| 7 | 黄泉の国 | 8500 | `7.png` | 骸骨・黒い岩・地面から伸びる手・鬼火 |
+| 8 | たぬきと狐の仙人の里 | 11300 | `8.png` | 雲の塊・ひょうたん・仙桃の籠・浮遊物 |
 
-これは確定仕様ではありません。
+Stage 5では、走行距離に応じて背景を `5-00` から `5-14` まで順番に切り替え、日本人形が徐々に近づく恐怖演出を行います。日本人形自体は障害物として判定しません。
 
-ゲームシステムはこの7STAGEに依存させません。
+Stage 7突入直後の最初のかな音声をToyo本人の声にする演出は、音声素材追加後に実装可能な演出候補として残します。
+
+Stage 8到達後は、仙人の里でエンドレス走行します。
 
 ---
 
@@ -703,30 +706,13 @@ Stage Length Up
 
 とすることで、後半でも景色が短時間で切り替わりすぎないようにします。
 
-具体的な距離はプレイテスト後に決定します。
+現在の開始距離は上記の `Start Distance` を使用し、プレイテストに応じて設定データだけを調整します。
 
 ---
 
 # Stage Obstacles
 
-例：
-
-```text
-Shrine
-→ Stone Lantern
-
-Mountain
-→ Rock / Fallen Tree
-
-Sea
-→ Driftwood / Reef
-
-Kyoto
-→ Cart / Sign
-
-Yomi
-→ Skeleton / Will-o'-the-wisp
-```
+各ステージの障害物候補は `Final Stage Configuration` の表に従います。
 
 内部判定は常に、
 

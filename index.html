@@ -97,11 +97,22 @@
   const ui = { title:$('titleScreen'), game:$('gameScreen'), result:$('resultScreen'), canvas:$('canvas'), world:$('world'), heart:$('heartHud'), combo:$('comboHud'), distance:$('distanceHud'), stage:$('stageHud'), status:$('status'), count:$('count'), kana:$('kana'), jump:$('jumpBtn'), replay:$('replayBtn'), mute:$('muteBtn'), flash:$('flash') };
   const kanaSet = ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'];
   const stages = [
-    {at:0,name:'暁の社',sky:['#f0a66f','#f9d99d'],far:'#9e6680',near:'#684d6f',ground:'#604534',accent:'#f7c45c'},
-    {at:900,name:'青竹の道',sky:['#79cfc3','#d9efc4'],far:'#4c9b78',near:'#28715d',ground:'#455536',accent:'#e8df74'},
-    {at:2200,name:'月影の峠',sky:['#334a78','#8a78a8'],far:'#384262',near:'#242d4d',ground:'#302d3c',accent:'#d9e5ff'},
-    {at:4000,name:'天つ空',sky:['#e45e52','#f0ae66'],far:'#8d4964',near:'#533958',ground:'#46333c',accent:'#fff1a3'}
+    {at:0,name:'神社',backgrounds:['1.png'],sky:['#67b8ec','#d8eff7'],ground:'#65513e',accent:'#f2c35e',jump:['石灯籠','石'],duck:['注連縄']},
+    {at:700,name:'桜並木',backgrounds:['2.png'],sky:['#79c8ee','#f7d8df'],ground:'#66513c',accent:'#f4a9be',jump:['落ちた枝','庭石'],duck:['垂れ下がる桜の枝']},
+    {at:1600,name:'葛飾北斎の波',backgrounds:['3.png'],sky:['#447eb2','#d7e7e9'],ground:'#594b3e',accent:'#dfb15a',jump:['抜けた橋板','桶'],duck:['吊り提灯']},
+    {at:2800,name:'富士山',backgrounds:['4-01.png','4-02.png'],sky:['#6eb8dc','#efd4a5'],ground:'#574a3c',accent:'#e7c66a',jump:['岩','倒木'],duck:['低い枝']},
+    {at:4300,name:'田舎のホラー',backgrounds:Array.from({length:15},(_,i)=>`5-${String(i).padStart(2,'0')}.png`),sky:['#664f68','#d58266'],ground:'#393238',accent:'#d9a25e',jump:['地蔵','倒れた自転車','農具'],duck:['垂れた竹'],horror:true},
+    {at:6200,name:'京都',backgrounds:['6.png'],sky:['#bb704c','#efd7a0'],ground:'#594033',accent:'#e1a84b',jump:['荷車','木箱','桶'],duck:['暖簾']},
+    {at:8500,name:'黄泉の国',backgrounds:['7.png'],sky:['#312842','#765268'],ground:'#29232c',accent:'#9b7acd',jump:['骸骨','黒い岩','地面から伸びる手'],duck:['鬼火'],yomi:true},
+    {at:11300,name:'たぬきと狐の仙人の里',backgrounds:['8.png'],sky:['#8bd8ef','#f5e9b6'],ground:'#66594d',accent:'#f4d36d',jump:['雲の塊','ひょうたん','仙桃の籠'],duck:['浮遊物'],endless:true}
   ];
+  const backgroundImages={};
+  function loadBackground(file){
+    if(!file)return null;
+    if(!backgroundImages[file]){const img=new Image();img.src=`asset/background/${file}`;backgroundImages[file]=img}
+    return backgroundImages[file];
+  }
+  loadBackground(stages[0].backgrounds[0]);
   const powers = [
     {at:0,name:'ルクス',speed:145,color:'#f7f1dc',aura:null},
     {at:3,name:'アマテラス',speed:158,color:'#fff1bb',aura:'#f6b73c'},
@@ -157,6 +168,19 @@
     state.characterAnim={type,start,end:start+duration,...details};
   }
   function stageIndex(){let n=0;for(let i=0;i<stages.length;i++)if(state.distance>=stages[i].at)n=i;return n}
+  function stageProgress(index){
+    const start=stages[index].at,next=stages[index+1]?.at;
+    if(!next)return (state.distance-start)%1400/1400;
+    return Math.max(0,Math.min(1,(state.distance-start)/(next-start)));
+  }
+  function stageBackground(index){
+    const files=stages[index].backgrounds,progress=stageProgress(index);
+    const imageIndex=Math.min(files.length-1,Math.floor(progress*files.length));
+    const image=loadBackground(files[imageIndex]);
+    loadBackground(files[imageIndex+1]);
+    if(progress>.78)loadBackground(stages[index+1]?.backgrounds[0]);
+    return image;
+  }
   function updateHud(){ui.heart.textContent='♥ '.repeat(state.hearts).trim()||'—';ui.combo.innerHTML='<small>COMBO</small>'+state.combo;ui.distance.innerHTML='<small>DIST</small>'+Math.floor(state.distance);const si=stageIndex();ui.stage.textContent=`STAGE ${si+1}・${stages[si].name}`;if(si!==state.stage){state.stage=si;flash();setStatus('新しい景色へ！ '+stages[si].name,'good')}}
   function setStatus(text,kind=''){ui.status.textContent=text;ui.status.className='status '+kind}
   function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?'✓ JUMP READY / もう一度で取消':'JUMP / ジャンプ予約'}
@@ -223,7 +247,7 @@
   }
   function question(){if(!state.running||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus('音を聞いて判断！');ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question;state.phase='reveal';state.phaseT=0;state.obstacle={type:q.match?'jump':'duck',x:W+45};ui.count.textContent='';setStatus(q.match?'一致！ 岩を飛び越えろ':'不一致！ 鳥居をくぐれ');if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}later(()=>judge(token),1050)}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:W+45,name:obstacleName};ui.count.textContent='';setStatus(q.match?`一致！ ${obstacleName}を飛び越えろ`:`不一致！ ${obstacleName}を避けろ`);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}later(()=>judge(token),1050)}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
@@ -250,13 +274,26 @@
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
   function drawSky(s){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle=s.accent+'aa';ctx.beginPath();ctx.arc(W*.78,H*.2,45,0,Math.PI*2);ctx.fill()}
   function mountains(color,base,amp,step,offset){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(0,H);for(let x=-step;x<W+step;x+=step){const xx=x-(offset%step);ctx.lineTo(xx,base);ctx.lineTo(xx+step*.5,base-amp);ctx.lineTo(xx+step,base)}ctx.lineTo(W,H);ctx.fill()}
+  function drawStageBackground(index){
+    const img=stageBackground(index);if(!img?.complete||!img.naturalWidth)return false;
+    const sourceRatio=img.naturalWidth/img.naturalHeight,targetRatio=W/H,progress=stageProgress(index);
+    let sx=0,sy=0,sw=img.naturalWidth,sh=img.naturalHeight;
+    if(sourceRatio>targetRatio){
+      sw=img.naturalHeight*targetRatio;
+      sx=(img.naturalWidth-sw)*progress;
+    }else{
+      sh=img.naturalWidth/targetRatio;
+      sy=(img.naturalHeight-sh)*.5;
+    }
+    ctx.drawImage(img,sx,sy,sw,sh,0,0,W,H);return true;
+  }
   function drawFallbackCharacter(px,py,p){
     ctx.fillStyle=p.color;ctx.beginPath();ctx.ellipse(px,py,28,23,0,0,Math.PI*2);ctx.fill();
     ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
     ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
   }
-  function drawWorld(dt){const s=stages[stageIndex()];const p=power();const ground=H*.77;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);state.shake*=.88}drawSky(s);mountains(s.far,ground,90,170,state.scroll*.13);mountains(s.near,ground+12,58,115,state.scroll*.28);
-    ctx.fillStyle=s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground, W,5);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff12';ctx.fillRect(x,ground+18,30,5)}
+  function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.77;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
+    ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){state.obstacle.x-=p.speed*dt;if(state.obstacle.type==='jump'){ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(state.obstacle.x-30,ground);ctx.lineTo(state.obstacle.x-19,ground-39);ctx.lineTo(state.obstacle.x+4,ground-55);ctx.lineTo(state.obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke()}else{ctx.fillStyle='#8d3c35';ctx.fillRect(state.obstacle.x-42,ground-118,12,118);ctx.fillRect(state.obstacle.x+30,ground-118,12,118);ctx.fillRect(state.obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(state.obstacle.x-47,ground-119,94,4)}}
     const px=Math.max(48,W*.25),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
