@@ -168,6 +168,7 @@
     state.characterAnim={type,start,end:start+duration,...details};
   }
   function stageIndex(){let n=0;for(let i=0;i<stages.length;i++)if(state.distance>=stages[i].at)n=i;return n}
+  function playerScreenX(){return Math.max(48,W*.25)}
   function stageProgress(index){
     const start=stages[index].at,next=stages[index+1]?.at;
     if(!next)return (state.distance-start)%1400/1400;
@@ -247,7 +248,7 @@
   }
   function question(){if(!state.running||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus('音を聞いて判断！');ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:W+45,name:obstacleName};ui.count.textContent='';setStatus(q.match?`一致！ ${obstacleName}を飛び越えろ`:`不一致！ ${obstacleName}を避けろ`);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}later(()=>judge(token),1050)}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:playerScreenX()+150,name:obstacleName,token,resolved:false};ui.count.textContent='';setStatus(q.match?`一致！ ${obstacleName}を飛び越えろ`:`不一致！ ${obstacleName}を避けろ`);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
@@ -295,8 +296,19 @@
   function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
     ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
-    if(state.obstacle){state.obstacle.x-=p.speed*dt;if(state.obstacle.type==='jump'){ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(state.obstacle.x-30,ground);ctx.lineTo(state.obstacle.x-19,ground-39);ctx.lineTo(state.obstacle.x+4,ground-55);ctx.lineTo(state.obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke()}else{ctx.fillStyle='#8d3c35';ctx.fillRect(state.obstacle.x-42,ground-118,12,118);ctx.fillRect(state.obstacle.x+30,ground-118,12,118);ctx.fillRect(state.obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(state.obstacle.x-47,ground-119,94,4)}}
-    const px=Math.max(48,W*.25),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
+    if(state.obstacle){
+      const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
+      if(obstacle.type==='jump'){
+        ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(obstacle.x-30,ground);ctx.lineTo(obstacle.x-19,ground-39);ctx.lineTo(obstacle.x+4,ground-55);ctx.lineTo(obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke();
+      }else{
+        ctx.fillStyle='#8d3c35';ctx.fillRect(obstacle.x-42,ground-118,12,118);ctx.fillRect(obstacle.x+30,ground-118,12,118);ctx.fillRect(obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(obstacle.x-47,ground-119,94,4);
+      }
+      if(!obstacle.resolved&&obstacle.x<=playerScreenX()+34){
+        obstacle.resolved=true;
+        judge(obstacle.token);
+      }
+    }
+    const px=playerScreenX(),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
     const now=performance.now();
     if(state.characterAnim&&now>=state.characterAnim.end)state.characterAnim=null;
     const anim=state.characterAnim;
