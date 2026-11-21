@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#17131e">
+  <title>アマテラス・ラーニングランナー</title>
+  <style>
+    :root{--paper:#fffaf0;--ink:#29222f;--red:#df4e46;--gold:#f3b63f;--green:#2f9b72;--glass:rgba(29,23,39,.76)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17131e;color:var(--ink);font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif}
+    button{font:inherit}.app{position:relative;width:min(100%,520px);height:100%;margin:auto;overflow:hidden;background:#88c9e8;box-shadow:0 0 70px #000}
+    .screen{position:absolute;inset:0;display:none}.screen.active{display:flex}
+    .title{align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 25%,#fff9cc 0 12%,transparent 31%),linear-gradient(#e86c4e 0 32%,#30233b 32%)}
+    .sun{position:absolute;top:8%;width:190px;height:190px;border-radius:50%;background:#fff2a5;box-shadow:0 0 60px #fff5b8;opacity:.9}
+    .title-card,.result-card{position:relative;width:100%;max-width:420px;padding:30px 22px 22px;border:3px solid #3b2c43;border-radius:26px;background:var(--paper);box-shadow:0 12px 0 #3b2c43,0 28px 50px #0007;text-align:center}
+    .crest{font-size:46px;line-height:1}.eyebrow{margin:8px 0;color:#b54b40;font-size:11px;font-weight:900;letter-spacing:.22em}
+    h1{margin:4px 0 8px;font-family:"Yu Mincho",serif;font-size:clamp(28px,8vw,42px);line-height:1.2}.title-copy{margin:0 0 22px;font-size:13px;line-height:1.8;color:#62566a}
+    .primary,.secondary{width:100%;min-height:60px;border:0;border-radius:16px;font-weight:900;letter-spacing:.08em;cursor:pointer;box-shadow:0 6px 0 #9f322d;transition:.1s}
+    .primary{color:white;background:linear-gradient(#ef6757,#d8433e)}.primary:active{transform:translateY(4px);box-shadow:0 2px 0 #9f322d}.secondary{margin-top:12px;background:#eee5d5;box-shadow:0 5px 0 #b8ac99;color:#514858}
+    .help{display:flex;justify-content:center;gap:18px;margin:20px 0 0;font-size:11px;font-weight:800;color:#675e6c}.help span{display:flex;align-items:center;gap:6px}.key{display:grid;place-items:center;width:28px;height:28px;border:2px solid #897d8d;border-radius:8px;background:white}
+    .game{flex-direction:column;background:#111}.world{position:relative;flex:1;min-height:0;overflow:hidden}.world canvas{display:block;width:100%;height:100%;touch-action:none}
+    .hud{position:absolute;inset:0 0 auto;padding:max(10px,env(safe-area-inset-top)) 12px 0;pointer-events:none}.hud-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}.chip{display:flex;align-items:center;justify-content:center;min-height:40px;padding:7px;border:2px solid #fff6;border-radius:12px;background:var(--glass);box-shadow:0 4px 12px #0004;color:white;font-size:12px;font-weight:900;text-shadow:0 2px 2px #000}.chip small{margin-right:5px;color:#f9d46c;font-size:8px}.hearts{letter-spacing:1px}
+    .stage-chip{width:max-content;margin:8px auto 0;padding:6px 12px;border-radius:99px;background:#17131eb8;color:#fff;font-size:9px;font-weight:900;letter-spacing:.14em}
+    .status{position:absolute;top:105px;left:50%;min-width:240px;transform:translateX(-50%);padding:8px 16px;border-radius:99px;background:#fffdebdd;box-shadow:0 4px 14px #0003;text-align:center;font-size:12px;font-weight:900;transition:.2s}.status.good{color:var(--green)}.status.bad{color:var(--red)}
+    .count{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);color:white;font-size:82px;font-weight:1000;text-shadow:0 6px 0 #3c2c48,0 0 25px #0008;pointer-events:none}
+    .mute{position:absolute;right:12px;top:58px;width:38px;height:38px;border:0;border-radius:50%;background:#17131eb8;color:white;cursor:pointer}
+    .question{flex:0 0 auto;padding:11px 12px max(12px,env(safe-area-inset-bottom));background:linear-gradient(135deg,#fff9ec,#eadcca);box-shadow:0 -6px 20px #0004}
+    .question-card{display:grid;grid-template-columns:75px 1fr 52px;align-items:center;min-height:86px;border:2px solid #d1c1a7;border-radius:17px;background:#fffdf7;overflow:hidden}.kana{font-family:"Yu Mincho",serif;font-size:54px;font-weight:900;text-align:center}.instruction{padding:0 8px;border-left:1px solid #dfd3c0;text-align:center}.instruction b{display:block;margin-bottom:4px;color:#a6423b;font-size:12px}.instruction span{font-size:10px;color:#756a78}.replay{width:40px;height:40px;border:0;border-radius:50%;background:#eee5d6;font-size:18px;cursor:pointer}.replay:disabled{opacity:.35}
+    .jump{width:100%;height:64px;margin-top:9px;border:0;border-radius:17px;background:linear-gradient(#3f3449,#251e2b);box-shadow:0 6px 0 #110e14;color:white;font-weight:1000;letter-spacing:.1em;cursor:pointer;transition:.1s}.jump.ready{background:linear-gradient(#f5c551,#e98b34);box-shadow:0 6px 0 #aa5427;color:#30202b;transform:translateY(-2px)}.jump:disabled{opacity:.5;cursor:default}
+    .result{align-items:center;justify-content:center;padding:22px;background:linear-gradient(#31243c,#d75b4b)}.result-card{max-height:95vh;overflow:auto}.result-card h2{margin:5px 0 2px;font-family:"Yu Mincho",serif;font-size:34px}.result-sub{font-size:11px;color:#726777}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0}.stat{padding:13px 6px;border:1px solid #ded1bc;border-radius:13px;background:#fff}.stat small{display:block;margin-bottom:5px;color:#827683;font-size:8px;font-weight:900}.stat strong{font-size:20px}.learned{text-align:left;margin:0 0 16px}.learned h3{font-size:11px}.kana-list{display:flex;flex-wrap:wrap;gap:6px}.kana-tag{min-width:32px;padding:6px;border-radius:8px;background:#eee5d5;text-align:center;font-family:"Yu Mincho",serif;font-weight:900}.tip{margin:0 0 14px;padding:10px;border-radius:10px;background:#fff0cf;color:#715127;font-size:10px;line-height:1.6}
+    .flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:white}.flash.on{animation:flash .45s}@keyframes flash{30%{opacity:.7}100%{opacity:0}}
+    @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.question-card{min-height:72px}.kana{font-size:44px}.jump{height:54px}.status{top:96px}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <section id="titleScreen" class="screen title active">
+    <div class="sun"></div>
+    <div class="title-card">
+      <div class="crest">☀</div><p class="eyebrow">聞いて、見抜いて、飛び越えろ</p>
+      <h1>アマテラス<br>ラーニングランナー</h1>
+      <p class="title-copy">音と文字が同じならジャンプ。<br>違うなら、そのまま走ろう。</p>
+      <button id="startBtn" class="primary">旅をはじめる</button>
+      <div class="help"><span><i class="key">↥</i>ジャンプ予約</span><span><i class="key">↥</i>もう一度で取消</span></div>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="screen game">
+    <div id="world" class="world">
+      <canvas id="canvas" aria-label="ゲーム画面"></canvas>
+      <div class="hud">
+        <div class="hud-row">
+          <div id="heartHud" class="chip hearts">♥ ♥ ♥</div>
+          <div id="comboHud" class="chip"><small>COMBO</small>0</div>
+          <div id="distanceHud" class="chip"><small>DIST</small>0</div>
+        </div>
+        <div id="stageHud" class="stage-chip">STAGE 1・暁の社</div>
+      </div>
+      <button id="muteBtn" class="mute" aria-label="音声切替">🔊</button>
+      <div id="status" class="status">耳をすませて…</div>
+      <div id="count" class="count">—</div>
+      <div id="flash" class="flash"></div>
+    </div>
+    <div class="question">
+      <div class="question-card">
+        <div id="kana" class="kana">—</div>
+        <div class="instruction"><b>音と同じ？</b><span>同じならジャンプ<br>違うならそのまま</span></div>
+        <button id="replayBtn" class="replay" disabled aria-label="音をもう一度聞く">↻</button>
+      </div>
+      <button id="jumpBtn" class="jump" disabled>JUMP / ジャンプ予約</button>
+    </div>
+  </section>
+
+  <section id="resultScreen" class="screen result">
+    <div class="result-card">
+      <div class="crest">☀</div><p class="eyebrow">LEARNING RESULT</p><h2>旅のきろく</h2>
+      <p id="resultMessage" class="result-sub">よくがんばりました！</p>
+      <div class="stats">
+        <div class="stat"><small>SCORE</small><strong id="resultScore">0</strong></div>
+        <div class="stat"><small>DISTANCE</small><strong id="resultDistance">0</strong></div>
+        <div class="stat"><small>MAX COMBO</small><strong id="resultCombo">0</strong></div>
+        <div class="stat"><small>ACCURACY</small><strong id="resultAccuracy">0%</strong></div>
+      </div>
+      <div class="learned"><h3>練習した文字 <span id="resultAnswered"></span></h3><div id="kanaList" class="kana-list"></div></div>
+      <p id="learningTip" class="tip"></p>
+      <button id="retryBtn" class="primary">もう一度走る</button>
+      <button id="titleBtn" class="secondary">タイトルへ</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const ui = { title:$('titleScreen'), game:$('gameScreen'), result:$('resultScreen'), canvas:$('canvas'), world:$('world'), heart:$('heartHud'), combo:$('comboHud'), distance:$('distanceHud'), stage:$('stageHud'), status:$('status'), count:$('count'), kana:$('kana'), jump:$('jumpBtn'), replay:$('replayBtn'), mute:$('muteBtn'), flash:$('flash') };
+  const kanaSet = ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'];
+  const stages = [
+    {at:0,name:'暁の社',sky:['#f0a66f','#f9d99d'],far:'#9e6680',near:'#684d6f',ground:'#604534',accent:'#f7c45c'},
+    {at:900,name:'青竹の道',sky:['#79cfc3','#d9efc4'],far:'#4c9b78',near:'#28715d',ground:'#455536',accent:'#e8df74'},
+    {at:2200,name:'月影の峠',sky:['#334a78','#8a78a8'],far:'#384262',near:'#242d4d',ground:'#302d3c',accent:'#d9e5ff'},
+    {at:4000,name:'天つ空',sky:['#e45e52','#f0ae66'],far:'#8d4964',near:'#533958',ground:'#46333c',accent:'#fff1a3'}
+  ];
+  const powers = [
+    {at:0,name:'ルクス',speed:145,color:'#f7f1dc',aura:null},
+    {at:3,name:'アマテラス',speed:158,color:'#fff1bb',aura:'#f6b73c'},
+    {at:10,name:'烈光',speed:170,color:'#fff0a0',aura:'#ef704c'},
+    {at:20,name:'スーパーアマテラス',speed:184,color:'#fffbe3',aura:'#62d8ef'},
+    {at:30,name:'神威',speed:198,color:'#ffffff',aura:'#b380ff'},
+    {at:40,name:'天照前夜',speed:212,color:'#ffffff',aura:'#ff6d7b'},
+    {at:50,name:'レイディアント・アマテラス',speed:228,color:'#ffffff',aura:'#fff37c'}
+  ];
+  const characterSources = {
+    lux:'asset/charactor/amaterasu/lux.png',
+    normal:'asset/charactor/amaterasu/nomal.png',
+    super:'asset/charactor/amaterasu/super.png'
+  };
+  // User-facing frame numbers are 1-based; canvas source indexes are 0-based.
+  const CHARACTER_FRAMES = {
+    stand:0, walk:[1,2,3,4], jump:5, land:6, hit:7, fall:8,
+    powerUp:9, powerEnd:10, float:11, floatDash:12, defeated:13
+  };
+  const characterSprites = {};
+  const milestoneSounds = new Map([
+    [3,'asset/correct/levelUpLv1.mp3'],
+    [10,'asset/correct/levelUpLv2.mp3'],
+    [20,'asset/correct/levelUpLv3.mp3'],
+    [30,'asset/correct/levelUpLv4.mp3'],
+    [40,'asset/correct/levelUpLv5.mp3'],
+    [50,'asset/correct/levelUpLv6.mp3']
+  ]);
+  const climaxSounds = [
+    'asset/correct/levelUpLv7--------.mp3','asset/correct/levelUpLv7-------.mp3',
+    'asset/correct/levelUpLv7------.mp3','asset/correct/levelUpLv7-----.mp3',
+    'asset/correct/levelUpLv7----.mp3','asset/correct/levelUpLv7---.mp3',
+    'asset/correct/levelUpLv7--.mp3','asset/correct/levelUpLv7-.mp3',
+    'asset/correct/levelUpLv7.mp3','asset/correct/levelUpLv7+.mp3',
+    'asset/correct/levelUpLv7++.mp3','asset/correct/levelUpLv7+++.mp3',
+    'asset/correct/levelUpLv7++++.mp3','asset/correct/levelUpLv7+++++.mp3',
+    'asset/correct/levelUpLv7++++++.mp3','asset/correct/levelUpLv7+++++++.mp3',
+    'asset/correct/levelUpLv7++++++++.mp3','asset/correct/levelUpLv7+++++++++.mp3'
+  ];
+  const correctAudio = new Map([...milestoneSounds.values(),...climaxSounds].map(src=>{
+    const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
+  }));
+  const state = {running:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]};
+  const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
+  let audioContext=null;
+
+  function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
+  function later(fn,ms){const id=setTimeout(fn,ms);timers.push(id);return id} function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+  function power(){let p=powers[0];for(const x of powers)if(state.combo>=x.at)p=x;return p}
+  function characterForm(){return state.combo>=20?'super':state.combo>=3?'normal':'lux'}
+  function setCharacterAnimation(type,duration,details={}){
+    const start=performance.now();
+    state.characterAnim={type,start,end:start+duration,...details};
+  }
+  function stageIndex(){let n=0;for(let i=0;i<stages.length;i++)if(state.distance>=stages[i].at)n=i;return n}
+  function updateHud(){ui.heart.textContent='♥ '.repeat(state.hearts).trim()||'—';ui.combo.innerHTML='<small>COMBO</small>'+state.combo;ui.distance.innerHTML='<small>DIST</small>'+Math.floor(state.distance);const si=stageIndex();ui.stage.textContent=`STAGE ${si+1}・${stages[si].name}`;if(si!==state.stage){state.stage=si;flash();setStatus('新しい景色へ！ '+stages[si].name,'good')}}
+  function setStatus(text,kind=''){ui.status.textContent=text;ui.status.className='status '+kind}
+  function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?'✓ JUMP READY / もう一度で取消':'JUMP / ジャンプ予約'}
+  function flash(){ui.flash.classList.remove('on');void ui.flash.offsetWidth;ui.flash.classList.add('on')}
+  function resize(){const r=ui.world.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;ui.canvas.width=Math.round(W*dpr);ui.canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
+  new ResizeObserver(resize).observe(ui.world);
+
+  // The supplied sprite strips have a solid white background. Remove only the
+  // white region connected to the outside, preserving white clothing details.
+  function removeSpriteBackground(img){
+    const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+    const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0);
+    try{
+      const pic=x.getImageData(0,0,c.width,c.height),data=pic.data,total=c.width*c.height;
+      // A source asset that already contains transparency needs no color-key pass.
+      let alreadyTransparent=false;
+      for(let i=3;i<data.length;i+=4){if(data[i]<255){alreadyTransparent=true;break}}
+      if(alreadyTransparent)return c;
+      const seen=new Uint8Array(total),stack=new Int32Array(total);let top=0;
+      const pale=i=>{const p=i*4;return data[p]>238&&data[p+1]>238&&data[p+2]>238};
+      const add=i=>{if(i>=0&&i<total&&!seen[i]&&pale(i)){seen[i]=1;stack[top++]=i}};
+      for(let px=0;px<c.width;px++){add(px);add((c.height-1)*c.width+px)}
+      for(let py=1;py<c.height-1;py++){add(py*c.width);add(py*c.width+c.width-1)}
+      while(top){const i=stack[--top],px=i%c.width;data[i*4+3]=0;if(px)add(i-1);if(px<c.width-1)add(i+1);add(i-c.width);add(i+c.width)}
+      x.putImageData(pic,0,0);
+    }catch(_){/* If canvas pixel access is restricted, the original still renders. */}
+    return c;
+  }
+  Object.entries(characterSources).forEach(([form,src])=>{
+    const img=new Image();img.onload=()=>{characterSprites[form]=removeSpriteBackground(img)};img.src=src;
+  });
+
+  function ensureAudioContext(){
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return null;
+    if(!audioContext)audioContext=new AudioContextClass();
+    if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+    return audioContext;
+  }
+  function speak(kana){
+    if(state.muted)return;
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(kana);
+      u.lang='ja-JP';u.rate=.72;u.pitch=1.08;u.volume=1;
+      u.onstart=()=>{state.voiceSpeaking=true};
+      u.onend=u.onerror=()=>{state.voiceSpeaking=false};
+      speechSynthesis.speak(u);
+    }
+  }
+  function playItemChime(){
+    const ac=ensureAudioContext();if(!ac)return;
+    const now=ac.currentTime,gain=ac.createGain();gain.connect(ac.destination);
+    gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.075,now+.012);gain.gain.exponentialRampToValueAtTime(.0001,now+.24);
+    [880,1320].forEach((frequency,i)=>{const osc=ac.createOscillator();osc.type='sine';osc.frequency.value=frequency;osc.connect(gain);osc.start(now+i*.055);osc.stop(now+.25)});
+  }
+  function playCorrectSound(combo,retry=0){
+    if(state.muted)return;
+    if(state.voiceSpeaking&&retry<8){later(()=>playCorrectSound(combo,retry+1),120);return}
+    let src=milestoneSounds.get(combo);
+    if(!src&&combo>50&&combo%10===0){src=climaxSounds[Math.floor(Math.random()*climaxSounds.length)]}
+    if(!src){playItemChime();return}
+    const audio=correctAudio.get(src);if(!audio)return;
+    audio.pause();audio.currentTime=0;audio.play().catch(()=>{});
+  }
+  function question(){if(!state.running||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus('音を聞いて判断！');ui.count.textContent='3';speak(audio);countdown(token,3)}
+  function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question;state.phase='reveal';state.phaseT=0;state.obstacle={type:q.match?'jump':'duck',x:W+45};ui.count.textContent='';setStatus(q.match?'一致！ 岩を飛び越えろ':'不一致！ 鳥居をくぐれ');if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}later(()=>judge(token),1050)}
+  function judge(token){
+    if(!state.running||token!==state.token)return;
+    const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
+    if(ok){
+      state.correct++;state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);state.score+=100+state.combo*10;playCorrectSound(state.combo);
+      const milestone=powers.find(p=>p.at===state.combo),nextForm=characterForm();
+      setStatus(milestone&&state.combo>0?`進化！ ${milestone.name}`:'正解！','good');
+      if(milestone){
+        setCharacterAnimation('power',900,{from:previousForm,to:nextForm});
+        flash();burst(W*.3,H*.6,milestone.color);
+      }
+    }else{
+      state.hearts--;state.combo=0;state.shake=12;setStatus('ミス！ パワーダウン','bad');
+      setCharacterAnimation(state.hearts<=0?'defeated':'hit',state.hearts<=0?950:680,{form:previousForm});
+    }
+    updateHud();if(state.hearts<=0){later(endRun,900)}else{later(question,900)}
+  }
+  function burst(x,y,color){for(let i=0;i<28;i++)state.particles.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.7)*260,life:1,color})}
+  function toggleReady(){if(state.running&&state.accepting)setReady(!state.jumpReady)}
+
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();Object.assign(state,{running:true,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]});show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setStatus('位置について…');cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);later(question,850)}
+  function endRun(){if(!state.running)return;state.running=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=`（全${state.answered}問）`;$('resultMessage').textContent=state.maxCombo>=20?'光り輝く走りでした！':state.maxCombo>=3?'アマテラスの力が目覚めました！':'一音ずつ覚えて、また進もう！';const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=`${state.correct}問正解しました。間違えてもコンボだけがリセットされ、練習した距離は残ります。`;show('result')}
+
+  function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
+  function drawSky(s){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle=s.accent+'aa';ctx.beginPath();ctx.arc(W*.78,H*.2,45,0,Math.PI*2);ctx.fill()}
+  function mountains(color,base,amp,step,offset){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(0,H);for(let x=-step;x<W+step;x+=step){const xx=x-(offset%step);ctx.lineTo(xx,base);ctx.lineTo(xx+step*.5,base-amp);ctx.lineTo(xx+step,base)}ctx.lineTo(W,H);ctx.fill()}
+  function drawFallbackCharacter(px,py,p){
+    ctx.fillStyle=p.color;ctx.beginPath();ctx.ellipse(px,py,28,23,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
+    ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
+  }
+  function drawWorld(dt){const s=stages[stageIndex()];const p=power();const ground=H*.77;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);state.shake*=.88}drawSky(s);mountains(s.far,ground,90,170,state.scroll*.13);mountains(s.near,ground+12,58,115,state.scroll*.28);
+    ctx.fillStyle=s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground, W,5);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff12';ctx.fillRect(x,ground+18,30,5)}
+    if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
+    if(state.obstacle){state.obstacle.x-=p.speed*dt;if(state.obstacle.type==='jump'){ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(state.obstacle.x-30,ground);ctx.lineTo(state.obstacle.x-19,ground-39);ctx.lineTo(state.obstacle.x+4,ground-55);ctx.lineTo(state.obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke()}else{ctx.fillStyle='#8d3c35';ctx.fillRect(state.obstacle.x-42,ground-118,12,118);ctx.fillRect(state.obstacle.x+30,ground-118,12,118);ctx.fillRect(state.obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(state.obstacle.x-47,ground-119,94,4)}}
+    const px=Math.max(48,W*.25),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
+    const now=performance.now();
+    if(state.characterAnim&&now>=state.characterAnim.end)state.characterAnim=null;
+    const anim=state.characterAnim;
+    let form=characterForm(),frame;
+    if(anim?.type==='power'){
+      const progress=(now-anim.start)/(anim.end-anim.start);
+      form=progress<.52?anim.from:anim.to;
+      frame=progress<.52?CHARACTER_FRAMES.powerUp:CHARACTER_FRAMES.powerEnd;
+    }else if(anim?.type==='hit'){
+      form=anim.form;frame=CHARACTER_FRAMES.hit;
+    }else if(anim?.type==='fall'){
+      form=anim.form;frame=CHARACTER_FRAMES.fall;
+    }else if(anim?.type==='defeated'){
+      form=anim.form;frame=CHARACTER_FRAMES.defeated;
+    }else if(anim?.type==='land'){
+      frame=CHARACTER_FRAMES.land;
+    }else if(state.playerY<-3){
+      frame=CHARACTER_FRAMES.jump;
+    }else if(state.phase==='idle'){
+      frame=CHARACTER_FRAMES.stand;
+    }else{
+      frame=CHARACTER_FRAMES.walk[Math.floor(state.scroll/18)%CHARACTER_FRAMES.walk.length];
+    }
+    const sprite=characterSprites[form];
+    if(sprite){
+      const size=Math.max(52,Math.min(126,W*.32,H*.48));
+      const drawY=Math.max(2,ground-size+8+state.playerY);
+      try{
+        ctx.drawImage(sprite,frame*256,0,256,256,px-size*.5,drawY,size,size);
+      }catch(_){
+        // Keep the player visible even if an image frame cannot be decoded.
+        drawFallbackCharacter(px,py,p);
+      }
+    }else{
+      // Lightweight fallback shown only while the external sprite is loading.
+      drawFallbackCharacter(px,py,p);
+    }
+    state.particles=state.particles.filter(a=>{a.life-=dt;a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=330*dt;if(a.life<=0)return false;ctx.globalAlpha=a.life;ctx.fillStyle=a.color;ctx.fillRect(a.x,a.y,5,5);ctx.globalAlpha=1;return true});ctx.restore()}
+  function loop(now){if(!state.running)return;const dt=Math.min((now-state.last)/1000,.04);state.last=now;state.phaseT+=dt;const p=power();state.distance+=p.speed*dt*.34;state.scroll+=p.speed*dt;state.playerV+=1450*dt;state.playerY+=state.playerV*dt;const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}drawWorld(dt);updateHud();raf=requestAnimationFrame(loop)}
+
+  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
+})();
+</script>
+</body>
+</html>

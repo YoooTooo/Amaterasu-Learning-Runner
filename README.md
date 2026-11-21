@@ -1,4 +1,14 @@
-# Amaterasu-Learning-Runner# Amaterasu Learning Runner
+# Amaterasu Learning Runner
+
+## Play
+
+`index.html` をブラウザで開くと、そのままプレイできます。キャラクターは `asset/charactor/amaterasu/` の3段階のスプライトを使用し、背景と障害物は Canvas で描画したダミーです。ビルドは不要です。
+
+音声にはブラウザ標準の日本語読み上げ機能を使用しています。端末に日本語音声がない場合でもゲーム進行は可能です。
+
+正解時は通常の取得チャイムを鳴らし、3・10・20・30・40・50コンボで `asset/correct/levelUpLv1.mp3` から `levelUpLv6.mp3` を順に再生します。60コンボ以降は10コンボごとに `levelUpLv7` 系のバリエーションを再生します。
+
+キャラクタースプライトは14コマ構成です。1コマ目は立ち、2〜5は歩行、6はジャンプ、7は着地、8は障害物命中、9は穴への落下、10〜11はパワーアップ、12〜13は浮遊系の将来用、14はやられ状態として扱います。進化時は旧形態の10コマ目から新形態の11コマ目へ切り替えます。
 
 Japanese-learning endless runner game built with Phaser.
 
