@@ -57,6 +57,8 @@
     .jump{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:0 0 0 3px #090711,6px 6px 0 #090711;color:#fff4cd;font-size:15px;transition:none}.jump.ready{background:#ffc94a;box-shadow:0 0 0 3px #8f4028,6px 6px 0 #090711;color:#251828;transform:none}.jump:active{transform:translate(4px,4px);box-shadow:0 0 0 3px #090711,2px 2px 0 #090711}
     .result{background:repeating-linear-gradient(135deg,#241a35 0 12px,#382342 12px 24px)}
     .stats{gap:8px}.stat{border:3px solid #fff4cd;border-radius:0;background:#2d2540;color:#fff;box-shadow:3px 3px 0 #080711}.stat small{color:#ffc94a;font-size:10px}.stat strong{font-family:"Courier New",monospace}.learned h3{font-size:13px}.kana-tag{border:2px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;font-family:"MS Gothic",monospace}.tip{border:3px solid #a06c35;border-radius:0;background:#fff0b5;color:#50351f;font-size:12px}
+    .lang-toggle{position:absolute;z-index:3;top:max(16px,env(safe-area-inset-top));right:16px;min-width:56px;height:40px;padding:0 10px;border:3px solid #fff4cd;border-radius:0;background:#171526;color:#fff4cd;box-shadow:4px 4px 0 #080711;font-size:13px;cursor:pointer}.lang-toggle:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #080711}
+    .title .title-card{padding:34px 24px 26px}.title-rule{min-height:44px;margin:14px 0 22px;color:#fff4cd;font-size:16px;line-height:1.5}.title-control{margin-top:18px;color:#aaa0bd;font-size:12px;letter-spacing:.1em}
     @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.question-card{min-height:72px}.kana{font-size:44px}.jump{height:54px}.status{top:96px}}
   </style>
 </head>
@@ -64,12 +66,13 @@
 <main class="app">
   <section id="titleScreen" class="screen title active">
     <div class="sun"></div>
+    <button id="langBtn" class="lang-toggle" aria-label="Switch language">EN</button>
     <div class="title-card">
-      <div class="crest">☀</div><p class="eyebrow">聞いて、見抜いて、飛び越えろ</p>
-      <h1>アマテラス<br>ラーニングランナー</h1>
-      <p class="title-copy">音と文字が同じならジャンプ。<br>違うなら、そのまま走ろう。</p>
+      <div class="crest">☀</div>
+      <h1 id="titleHeading">アマテラス<br>ラーニングランナー</h1>
+      <p id="titleRule" class="title-rule">音と文字が同じなら JUMP</p>
       <button id="startBtn" class="primary">旅をはじめる</button>
-      <div class="help"><span><i class="key">↥</i>ジャンプ予約</span><span><i class="key">↥</i>もう一度で取消</span></div>
+      <div id="titleControl" class="title-control">TAP / SPACE</div>
     </div>
   </section>
 
@@ -122,6 +125,19 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const ui = { title:$('titleScreen'), game:$('gameScreen'), result:$('resultScreen'), canvas:$('canvas'), world:$('world'), heart:$('heartHud'), combo:$('comboHud'), distance:$('distanceHud'), stage:$('stageHud'), status:$('status'), count:$('count'), kana:$('kana'), jump:$('jumpBtn'), replay:$('replayBtn'), mute:$('muteBtn'), flash:$('flash') };
+  const titleText={
+    ja:{heading:'アマテラス<br>ラーニングランナー',rule:'音と文字が同じなら JUMP',start:'旅をはじめる',control:'TAP / SPACE',switchLabel:'EN'},
+    en:{heading:'AMATERASU<br>LEARNING RUNNER',rule:'JUMP WHEN SOUND = KANA',start:'START',control:'TAP / SPACE',switchLabel:'日本語'}
+  };
+  let titleLanguage='ja';
+  try{titleLanguage=localStorage.getItem('amaterasu-language')||(navigator.language.startsWith('ja')?'ja':'en')}catch(_){}
+  function applyTitleLanguage(language){
+    titleLanguage=language==='en'?'en':'ja';const text=titleText[titleLanguage];
+    $('titleHeading').innerHTML=text.heading;$('titleRule').textContent=text.rule;$('startBtn').textContent=text.start;$('titleControl').textContent=text.control;$('langBtn').textContent=text.switchLabel;
+    ui.title.lang=titleLanguage;$('langBtn').setAttribute('aria-label',titleLanguage==='ja'?'Switch to English':'日本語に切り替える');
+    try{localStorage.setItem('amaterasu-language',titleLanguage)}catch(_){}
+  }
+  applyTitleLanguage(titleLanguage);
   const kanaSet = ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'];
   const stages = [
     {at:0,name:'神社',backgrounds:['1.png'],sky:['#67b8ec','#d8eff7'],ground:'#65513e',accent:'#f2c35e',jump:['石灯籠','石'],duck:['注連縄']},
@@ -376,6 +392,7 @@
     state.particles=state.particles.filter(a=>{a.life-=dt;a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=330*dt;if(a.life<=0)return false;ctx.globalAlpha=a.life;ctx.fillStyle=a.color;ctx.fillRect(a.x,a.y,5,5);ctx.globalAlpha=1;return true});ctx.restore()}
   function loop(now){if(!state.running)return;const dt=Math.min((now-state.last)/1000,.04);state.last=now;state.phaseT+=dt;const p=power();state.distance+=p.speed*dt*.34;state.scroll+=p.speed*dt;state.playerV+=1450*dt;state.playerY+=state.playerV*dt;const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}drawWorld(dt);updateHud();raf=requestAnimationFrame(loop)}
 
+  $('langBtn').addEventListener('click',()=>applyTitleLanguage(titleLanguage==='ja'?'en':'ja'));
   $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
 })();
 </script>
