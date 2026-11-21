@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#17131e">
-  <title>アマテラス・ラーニングランナー</title>
+  <title>AMATERASU LEARNING RUNNER</title>
   <style>
     :root{--paper:#fffaf0;--ink:#29222f;--red:#df4e46;--gold:#f3b63f;--green:#2f9b72;--glass:rgba(29,23,39,.76)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -84,44 +84,44 @@
 
   <section id="gameScreen" class="screen game">
     <div id="world" class="world">
-      <canvas id="canvas" aria-label="ゲーム画面"></canvas>
+      <canvas id="canvas" aria-label="Game screen"></canvas>
       <div class="hud">
         <div class="hud-row">
           <div id="heartHud" class="chip hearts">♥ ♥ ♥</div>
           <div id="comboHud" class="chip"><small>COMBO</small>0</div>
           <div id="distanceHud" class="chip"><small>DIST</small>0</div>
         </div>
-        <div id="stageHud" class="stage-chip">STAGE 1・神社</div>
+        <div id="stageHud" class="stage-chip">STAGE 1・SHRINE</div>
       </div>
-      <button id="muteBtn" class="mute" aria-label="音声切替">🔊</button>
-      <div id="status" class="status">耳をすませて…</div>
+      <button id="muteBtn" class="mute" aria-label="Sound">🔊</button>
+      <div id="status" class="status">LISTEN…</div>
       <div id="count" class="count">—</div>
       <div id="flash" class="flash"></div>
     </div>
     <div class="question">
       <div class="question-card">
         <div id="kana" class="kana">—</div>
-        <div class="instruction"><b>音と同じ？</b><span>同じならジャンプ<br>違うならそのまま</span></div>
-        <button id="replayBtn" class="replay" disabled aria-label="音をもう一度聞く">↻</button>
+        <div class="instruction"><b id="instructionTitle">SOUND = KANA?</b><span id="instructionBody">MATCH: JUMP<br>DIFFERENT: STAY</span></div>
+        <button id="replayBtn" class="replay" disabled aria-label="Replay sound">↻</button>
       </div>
-      <button id="jumpBtn" class="jump" disabled>JUMP / ジャンプ予約</button>
+      <button id="jumpBtn" class="jump" disabled>JUMP</button>
     </div>
   </section>
 
   <section id="resultScreen" class="screen result">
     <div class="result-card">
-      <div class="crest">☀</div><p class="eyebrow">LEARNING RESULT</p><h2>旅のきろく</h2>
-      <p id="resultMessage" class="result-sub">よくがんばりました！</p>
+      <div class="crest">☀</div><p id="resultEyebrow" class="eyebrow">LEARNING RESULT</p><h2 id="resultTitle">RUN RESULT</h2>
+      <p id="resultMessage" class="result-sub">GOOD RUN!</p>
       <div class="stats">
-        <div class="stat"><small>SCORE</small><strong id="resultScore">0</strong></div>
-        <div class="stat"><small>DISTANCE</small><strong id="resultDistance">0</strong></div>
-        <div class="stat"><small>MAX COMBO</small><strong id="resultCombo">0</strong></div>
-        <div class="stat"><small>ACCURACY</small><strong id="resultAccuracy">0%</strong></div>
+        <div class="stat"><small id="scoreLabel">SCORE</small><strong id="resultScore">0</strong></div>
+        <div class="stat"><small id="distanceLabel">DISTANCE</small><strong id="resultDistance">0</strong></div>
+        <div class="stat"><small id="maxComboLabel">MAX COMBO</small><strong id="resultCombo">0</strong></div>
+        <div class="stat"><small id="accuracyLabel">ACCURACY</small><strong id="resultAccuracy">0%</strong></div>
       </div>
-      <div class="learned"><h3>練習した文字 <span id="resultAnswered"></span></h3><div id="kanaList" class="kana-list"></div></div>
+      <div class="learned"><h3><span id="practicedLabel">PRACTICED KANA</span> <span id="resultAnswered"></span></h3><div id="kanaList" class="kana-list"></div></div>
       <p id="learningTip" class="tip"></p>
-      <button id="retryBtn" class="primary">もう一度走る</button>
-      <button id="titleBtn" class="secondary">タイトルへ</button>
+      <button id="retryBtn" class="primary">RUN AGAIN</button>
+      <button id="titleBtn" class="secondary">TITLE</button>
     </div>
   </section>
 </main>
@@ -131,24 +131,28 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const ui = { title:$('titleScreen'), game:$('gameScreen'), result:$('resultScreen'), canvas:$('canvas'), world:$('world'), heart:$('heartHud'), combo:$('comboHud'), distance:$('distanceHud'), stage:$('stageHud'), status:$('status'), count:$('count'), kana:$('kana'), jump:$('jumpBtn'), replay:$('replayBtn'), mute:$('muteBtn'), flash:$('flash') };
-  const titleText={
-    en:{rule:'JUMP WHEN SOUND = KANA',start:'START',control:'TAP / SPACE'},
-    ja:{rule:'音と文字が同じなら JUMP',start:'旅をはじめる',control:'タップ / スペース'},
-    es:{rule:'SALTA SI EL SONIDO = KANA',start:'EMPEZAR',control:'TOCAR / ESPACIO'},
-    zh:{rule:'声音和假名相同就跳跃',start:'开始',control:'点击 / 空格'},
-    ko:{rule:'소리와 가나가 같으면 점프',start:'시작',control:'탭 / 스페이스'}
+  const locales={
+    en:{rule:'JUMP WHEN SOUND = KANA',start:'START',control:'TAP / SPACE',combo:'COMBO',dist:'DIST',stage:'STAGE',listen:'LISTEN AND DECIDE!',ready:'GET READY…',instruction:'SOUND = KANA?',instructionBody:'MATCH: JUMP<br>DIFFERENT: STAY',jump:'JUMP',jumpReady:'✓ JUMP READY / TAP TO CANCEL',match:'MATCH! JUMP!',different:'DIFFERENT! STAY!',correct:'CORRECT!',power:'POWER UP!',miss:'MISS! POWER DOWN',newStage:'NEW STAGE',result:'LEARNING RESULT',runResult:'RUN RESULT',score:'SCORE',distance:'DISTANCE',maxCombo:'MAX COMBO',accuracy:'ACCURACY',practiced:'PRACTICED KANA',retry:'RUN AGAIN',title:'TITLE',answers:n=>`(${n} ANSWERS)`,tip:n=>`${n} correct. A miss resets your combo, but your distance remains.`,messages:['KEEP LISTENING AND RUN AGAIN!','AMATERASU HAS AWAKENED!','A RADIANT RUN!'],stages:['SHRINE','CHERRY ROAD','HOKUSAI WAVE','MT. FUJI','RURAL HORROR','KYOTO','YOMI','SAGE VILLAGE']},
+    ja:{rule:'音と文字が同じなら JUMP',start:'旅をはじめる',control:'タップ / スペース',combo:'コンボ',dist:'距離',stage:'ステージ',listen:'音を聞いて判断！',ready:'位置について…',instruction:'音と同じ？',instructionBody:'同じ：ジャンプ<br>違う：そのまま',jump:'ジャンプ予約',jumpReady:'✓ 予約済み / タップで取消',match:'一致！ジャンプ！',different:'不一致！そのまま！',correct:'正解！',power:'パワーアップ！',miss:'ミス！パワーダウン',newStage:'新しい景色',result:'学習結果',runResult:'旅のきろく',score:'スコア',distance:'距離',maxCombo:'最大コンボ',accuracy:'正答率',practiced:'練習した文字',retry:'もう一度走る',title:'タイトルへ',answers:n=>`（全${n}問）`,tip:n=>`${n}問正解しました。ミスするとコンボはリセットされますが、距離は残ります。`,messages:['一音ずつ覚えて、また進もう！','アマテラスの力が目覚めました！','光り輝く走りでした！'],stages:['神社','桜並木','葛飾北斎の波','富士山','田舎のホラー','京都','黄泉の国','たぬきと狐の仙人の里']},
+    es:{rule:'SALTA SI EL SONIDO = KANA',start:'EMPEZAR',control:'TOCAR / ESPACIO',combo:'COMBO',dist:'DIST',stage:'ETAPA',listen:'¡ESCUCHA Y DECIDE!',ready:'PREPÁRATE…',instruction:'¿SONIDO = KANA?',instructionBody:'IGUAL: SALTA<br>DIFERENTE: SIGUE',jump:'PREPARAR SALTO',jumpReady:'✓ LISTO / TOCA PARA CANCELAR',match:'¡IGUAL! ¡SALTA!',different:'¡DIFERENTE! ¡SIGUE!',correct:'¡CORRECTO!',power:'¡MÁS PODER!',miss:'¡FALLO! PIERDES PODER',newStage:'NUEVA ETAPA',result:'RESULTADO',runResult:'RESULTADO DE CARRERA',score:'PUNTOS',distance:'DISTANCIA',maxCombo:'COMBO MÁX.',accuracy:'PRECISIÓN',practiced:'KANAS PRACTICADOS',retry:'CORRER DE NUEVO',title:'TÍTULO',answers:n=>`(${n} RESPUESTAS)`,tip:n=>`${n} respuestas correctas. Un fallo reinicia el combo, pero conserva la distancia.`,messages:['¡ESCUCHA Y VUELVE A CORRER!','¡AMATERASU HA DESPERTADO!','¡UNA CARRERA RADIANTE!'],stages:['SANTUARIO','CAMINO DE CEREZOS','OLA DE HOKUSAI','MONTE FUJI','TERROR RURAL','KIOTO','YOMI','ALDEA CELESTIAL']},
+    zh:{rule:'声音和假名相同就跳跃',start:'开始',control:'点击 / 空格',combo:'连击',dist:'距离',stage:'关卡',listen:'听声音并判断！',ready:'准备…',instruction:'声音＝假名？',instructionBody:'相同：跳跃<br>不同：继续跑',jump:'准备跳跃',jumpReady:'✓ 已准备 / 点击取消',match:'相同！跳跃！',different:'不同！继续跑！',correct:'正确！',power:'升级！',miss:'失误！能量归零',newStage:'新关卡',result:'学习结果',runResult:'旅程记录',score:'分数',distance:'距离',maxCombo:'最高连击',accuracy:'正确率',practiced:'练习过的假名',retry:'再跑一次',title:'返回标题',answers:n=>`（共${n}题）`,tip:n=>`答对${n}题。失误会重置连击，但距离会保留。`,messages:['继续听音，再试一次！','天照之力觉醒了！','光辉的奔跑！'],stages:['神社','樱花道','北斋巨浪','富士山','乡村恐怖','京都','黄泉之国','仙人之乡']},
+    ko:{rule:'소리와 가나가 같으면 점프',start:'시작',control:'탭 / 스페이스',combo:'콤보',dist:'거리',stage:'스테이지',listen:'소리를 듣고 판단!',ready:'준비…',instruction:'소리 = 가나?',instructionBody:'같음: 점프<br>다름: 그대로',jump:'점프 준비',jumpReady:'✓ 준비 완료 / 탭으로 취소',match:'일치! 점프!',different:'불일치! 그대로!',correct:'정답!',power:'파워 업!',miss:'실수! 파워 다운',newStage:'새로운 스테이지',result:'학습 결과',runResult:'여정 기록',score:'점수',distance:'거리',maxCombo:'최대 콤보',accuracy:'정답률',practiced:'연습한 가나',retry:'다시 달리기',title:'타이틀로',answers:n=>`(총 ${n}문제)`,tip:n=>`${n}문제 정답. 실수하면 콤보는 초기화되지만 거리는 유지됩니다.`,messages:['한 음씩 익히고 다시 달려요!','아마테라스의 힘이 깨어났습니다!','빛나는 질주였습니다!'],stages:['신사','벚꽃길','호쿠사이의 파도','후지산','시골 공포','교토','요미의 나라','선인의 마을']}
   };
   const languageCodes={en:'en',ja:'ja',es:'es',zh:'zh-CN',ko:'ko'};
   let titleLanguage='en';
   try{titleLanguage=localStorage.getItem('amaterasu-language-v2')||'en'}catch(_){}
   function applyTitleLanguage(language){
-    titleLanguage=titleText[language]?language:'en';const text=titleText[titleLanguage];
+    titleLanguage=locales[language]?language:'en';const text=locales[titleLanguage];
     $('titleRule').textContent=text.rule;$('startBtn').textContent=text.start;$('titleControl').textContent=text.control;
+    $('instructionTitle').textContent=text.instruction;$('instructionBody').innerHTML=text.instructionBody;
+    $('resultEyebrow').textContent=text.result;$('resultTitle').textContent=text.runResult;$('scoreLabel').textContent=text.score;$('distanceLabel').textContent=text.distance;$('maxComboLabel').textContent=text.maxCombo;$('accuracyLabel').textContent=text.accuracy;$('practicedLabel').textContent=text.practiced;$('retryBtn').textContent=text.retry;$('titleBtn').textContent=text.title;
+    ui.canvas.setAttribute('aria-label',text.runResult);ui.mute.setAttribute('aria-label','Sound');ui.replay.setAttribute('aria-label',text.listen);
     ui.title.lang=languageCodes[titleLanguage];
     document.querySelectorAll('.language-choice').forEach(button=>{const active=button.dataset.language===titleLanguage;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
     try{localStorage.setItem('amaterasu-language-v2',titleLanguage)}catch(_){}
   }
   applyTitleLanguage(titleLanguage);
+  function tr(){return locales[titleLanguage]}
   const kanaSet = ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'];
   const stages = [
     {at:0,name:'神社',backgrounds:['1.png'],sky:['#67b8ec','#d8eff7'],ground:'#65513e',accent:'#f2c35e',jump:['石灯籠','石'],duck:['注連縄']},
@@ -236,9 +240,9 @@
     if(progress>.78)loadBackground(stages[index+1]?.backgrounds[0]);
     return image;
   }
-  function updateHud(){ui.heart.textContent='♥ '.repeat(state.hearts).trim()||'—';ui.combo.innerHTML='<small>COMBO</small>'+state.combo;ui.distance.innerHTML='<small>DIST</small>'+Math.floor(state.distance);const si=stageIndex();ui.stage.textContent=`STAGE ${si+1}・${stages[si].name}`;if(si!==state.stage){state.stage=si;flash();setStatus('新しい景色へ！ '+stages[si].name,'good')}}
+  function updateHud(){const text=tr();ui.heart.textContent='♥ '.repeat(state.hearts).trim()||'—';ui.combo.innerHTML=`<small>${text.combo}</small>${state.combo}`;ui.distance.innerHTML=`<small>${text.dist}</small>${Math.floor(state.distance)}`;const si=stageIndex(),stageName=text.stages[si];ui.stage.textContent=`${text.stage} ${si+1}・${stageName}`;if(si!==state.stage){state.stage=si;flash();setStatus(`${text.newStage}: ${stageName}`,'good')}}
   function setStatus(text,kind=''){ui.status.textContent=text;ui.status.className='status '+kind}
-  function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?'✓ JUMP READY / もう一度で取消':'JUMP / ジャンプ予約'}
+  function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?tr().jumpReady:tr().jump}
   function flash(){ui.flash.classList.remove('on');void ui.flash.offsetWidth;ui.flash.classList.add('on')}
   function resize(){const r=ui.world.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;ui.canvas.width=Math.round(W*dpr);ui.canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
   new ResizeObserver(resize).observe(ui.world);
@@ -300,22 +304,22 @@
     const audio=correctAudio.get(src);if(!audio)return;
     audio.pause();audio.currentTime=0;audio.play().catch(()=>{});
   }
-  function question(){if(!state.running||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus('音を聞いて判断！');ui.count.textContent='3';speak(audio);countdown(token,3)}
+  function question(){if(!state.running||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus(tr().listen);ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:playerScreenX()+150,name:obstacleName,token,resolved:false};ui.count.textContent='';setStatus(q.match?`一致！ ${obstacleName}を飛び越えろ`:`不一致！ ${obstacleName}を避けろ`);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:playerScreenX()+150,name:obstacleName,token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
     if(ok){
       state.correct++;state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);state.score+=100+state.combo*10;playCorrectSound(state.combo);
       const milestone=powers.find(p=>p.at===state.combo),nextForm=characterForm();
-      setStatus(milestone&&state.combo>0?`進化！ ${milestone.name}`:'正解！','good');
+      setStatus(milestone&&state.combo>0?tr().power:tr().correct,'good');
       if(milestone){
         setCharacterAnimation('power',900,{from:previousForm,to:nextForm});
         flash();burst(W*.3,H*.6,milestone.color);
       }
     }else{
-      state.hearts--;state.combo=0;state.shake=12;setStatus('ミス！ パワーダウン','bad');
+      state.hearts--;state.combo=0;state.shake=12;setStatus(tr().miss,'bad');
       setCharacterAnimation(state.hearts<=0?'defeated':'hit',state.hearts<=0?950:680,{form:previousForm});
     }
     updateHud();if(state.hearts<=0){later(endRun,900)}else{later(question,900)}
@@ -323,8 +327,8 @@
   function burst(x,y,color){for(let i=0;i<28;i++)state.particles.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.7)*260,life:1,color})}
   function toggleReady(){if(state.running&&state.accepting)setReady(!state.jumpReady)}
 
-  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();Object.assign(state,{running:true,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]});show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setStatus('位置について…');cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);later(question,850)}
-  function endRun(){if(!state.running)return;state.running=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=`（全${state.answered}問）`;$('resultMessage').textContent=state.maxCombo>=20?'光り輝く走りでした！':state.maxCombo>=3?'アマテラスの力が目覚めました！':'一音ずつ覚えて、また進もう！';const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=`${state.correct}問正解しました。間違えてもコンボだけがリセットされ、練習した距離は残ります。`;show('result')}
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();Object.assign(state,{running:true,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]});show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);later(question,850)}
+  function endRun(){if(!state.running)return;state.running=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);const text=tr();$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
 
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
   function drawSky(s){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle=s.accent+'aa';ctx.beginPath();ctx.arc(W*.78,H*.2,45,0,Math.PI*2);ctx.fill()}
