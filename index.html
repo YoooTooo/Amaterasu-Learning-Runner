@@ -30,6 +30,33 @@
     .jump{width:100%;height:64px;margin-top:9px;border:0;border-radius:17px;background:linear-gradient(#3f3449,#251e2b);box-shadow:0 6px 0 #110e14;color:white;font-weight:1000;letter-spacing:.1em;cursor:pointer;transition:.1s}.jump.ready{background:linear-gradient(#f5c551,#e98b34);box-shadow:0 6px 0 #aa5427;color:#30202b;transform:translateY(-2px)}.jump:disabled{opacity:.5;cursor:default}
     .result{align-items:center;justify-content:center;padding:22px;background:linear-gradient(#31243c,#d75b4b)}.result-card{max-height:95vh;overflow:auto}.result-card h2{margin:5px 0 2px;font-family:"Yu Mincho",serif;font-size:34px}.result-sub{font-size:11px;color:#726777}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0}.stat{padding:13px 6px;border:1px solid #ded1bc;border-radius:13px;background:#fff}.stat small{display:block;margin-bottom:5px;color:#827683;font-size:8px;font-weight:900}.stat strong{font-size:20px}.learned{text-align:left;margin:0 0 16px}.learned h3{font-size:11px}.kana-list{display:flex;flex-wrap:wrap;gap:6px}.kana-tag{min-width:32px;padding:6px;border-radius:8px;background:#eee5d5;text-align:center;font-family:"Yu Mincho",serif;font-weight:900}.tip{margin:0 0 14px;padding:10px;border-radius:10px;background:#fff0cf;color:#715127;font-size:10px;line-height:1.6}
     .flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:white}.flash.on{animation:flash .45s}@keyframes flash{30%{opacity:.7}100%{opacity:0}}
+
+    /* Retro pixel UI layer */
+    :root{--pixel-dark:#171526;--pixel-deep:#27203a;--pixel-light:#fff4cd;--pixel-gold:#ffc94a;--pixel-red:#e84b3c;--pixel-green:#54d18b}
+    html,body,button{font-family:"Courier New","MS Gothic","Hiragino Kaku Gothic ProN",monospace;font-weight:900}
+    .app{border-left:4px solid #07060d;border-right:4px solid #07060d;box-shadow:12px 0 0 #0008,-12px 0 0 #0008}
+    .app::after{content:"";position:absolute;inset:0;z-index:100;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(8,5,18,.09) 3px 4px);mix-blend-mode:multiply}
+    .title{background:linear-gradient(180deg,#d94d3e 0 34%,#241a35 34% 100%);image-rendering:pixelated}
+    .sun{top:7%;width:176px;height:176px;border-radius:0;clip-path:polygon(25% 0,75% 0,75% 6%,88% 6%,88% 13%,94% 13%,94% 25%,100% 25%,100% 75%,94% 75%,94% 88%,88% 88%,88% 94%,75% 94%,75% 100%,25% 100%,25% 94%,13% 94%,13% 88%,6% 88%,6% 75%,0 75%,0 25%,6% 25%,6% 13%,13% 13%,13% 6%,25% 6%);background:#ffe46b;box-shadow:none}
+    .title-card,.result-card{border:4px solid var(--pixel-light);border-radius:0;background:var(--pixel-dark);box-shadow:0 0 0 4px #080711,10px 10px 0 #080711;color:var(--pixel-light)}
+    .title-card::before,.result-card::before{content:"";position:absolute;inset:7px;border:2px solid #5c4b71;pointer-events:none}
+    .crest{color:var(--pixel-gold);text-shadow:3px 3px 0 #9f432e}.eyebrow{color:var(--pixel-gold);font-size:12px;text-shadow:2px 2px 0 #000}
+    h1,.result-card h2{font-family:"Courier New","MS Gothic",monospace;color:#fff;text-shadow:3px 0 #9d3540,-3px 0 #327091,0 3px #9d3540,0 -3px #327091;letter-spacing:.03em}
+    .title-copy,.result-sub{color:#ded4ef;font-size:14px}
+    .primary,.secondary{border:4px solid #fff4cd;border-radius:0;box-shadow:0 0 0 3px #171526,6px 6px 0 #080711;transition:none;text-transform:uppercase}
+    .primary{color:#261923;background:#e44a3d}.primary:active,.secondary:active{transform:translate(4px,4px);box-shadow:0 0 0 3px #171526,2px 2px 0 #080711}.secondary{color:#241a35;background:#ffc94a}
+    .help{color:#ded4ef;font-size:12px}.key{border:3px solid #fff4cd;border-radius:0;background:#362d4a;color:#fff;box-shadow:3px 3px 0 #080711;font-style:normal}
+    .world canvas{image-rendering:pixelated}
+    .hud-row{gap:6px}.chip{min-height:42px;border:3px solid #fff4cd;border-radius:0;background:#171526e8;box-shadow:4px 4px 0 #080711;color:#fff;font-size:13px;text-shadow:2px 2px 0 #000}.chip small{color:var(--pixel-gold);font-size:10px}
+    .stage-chip{border:3px solid #fff4cd;border-radius:0;background:#27203a;color:#fff;padding:7px 12px;box-shadow:4px 4px 0 #080711;font-size:11px}
+    .status{border:3px solid #171526;border-radius:0;background:#fff4cd;box-shadow:5px 5px 0 #171526;color:#241a35;font-size:13px;text-transform:uppercase}.status.good{color:#09663c}.status.bad{color:#a9262a;background:#ffd0bd}
+    .count{font-family:"Courier New",monospace;color:#fff4cd;text-shadow:5px 0 #d4483d,-5px 0 #34769a,0 6px #171526;font-size:88px}
+    .mute{border:3px solid #fff4cd;border-radius:0;background:#171526;color:#fff;box-shadow:3px 3px 0 #080711}
+    .question{border-top:5px solid #090711;background:#27203a;box-shadow:none}
+    .question-card{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:5px 5px 0 #090711;color:#fff;overflow:visible}.kana{font-family:"MS Gothic","Yu Gothic",monospace;color:#fff4cd;text-shadow:3px 3px 0 #a53b36}.instruction{border-left:3px solid #5c4b71}.instruction b{color:#ffc94a;font-size:14px}.instruction span{color:#ddd2ea;font-size:12px}.replay{border:3px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;box-shadow:3px 3px 0 #080711}
+    .jump{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:0 0 0 3px #090711,6px 6px 0 #090711;color:#fff4cd;font-size:15px;transition:none}.jump.ready{background:#ffc94a;box-shadow:0 0 0 3px #8f4028,6px 6px 0 #090711;color:#251828;transform:none}.jump:active{transform:translate(4px,4px);box-shadow:0 0 0 3px #090711,2px 2px 0 #090711}
+    .result{background:repeating-linear-gradient(135deg,#241a35 0 12px,#382342 12px 24px)}
+    .stats{gap:8px}.stat{border:3px solid #fff4cd;border-radius:0;background:#2d2540;color:#fff;box-shadow:3px 3px 0 #080711}.stat small{color:#ffc94a;font-size:10px}.stat strong{font-family:"Courier New",monospace}.learned h3{font-size:13px}.kana-tag{border:2px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;font-family:"MS Gothic",monospace}.tip{border:3px solid #a06c35;border-radius:0;background:#fff0b5;color:#50351f;font-size:12px}
     @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.question-card{min-height:72px}.kana{font-size:44px}.jump{height:54px}.status{top:96px}}
   </style>
 </head>
@@ -55,7 +82,7 @@
           <div id="comboHud" class="chip"><small>COMBO</small>0</div>
           <div id="distanceHud" class="chip"><small>DIST</small>0</div>
         </div>
-        <div id="stageHud" class="stage-chip">STAGE 1・暁の社</div>
+        <div id="stageHud" class="stage-chip">STAGE 1・神社</div>
       </div>
       <button id="muteBtn" class="mute" aria-label="音声切替">🔊</button>
       <div id="status" class="status">耳をすませて…</div>
