@@ -1,0 +1,861 @@
+{
+  "generatedAt": "2026-11-22T11:46:02.417Z",
+  "source": "Wikimedia Commons",
+  "note": "Only isolated kana recordings are included; recordings of whole words were not substituted.",
+  "counts": {
+    "downloaded": 72,
+    "missingYoon": 32
+  },
+  "files": [
+    {
+      "kana": "あ",
+      "romanization": "a",
+      "group": "basic",
+      "file": "basic/a.mp3",
+      "commonsTitle": "File:Ja-A.oga",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJa-A.oga",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "い",
+      "romanization": "i",
+      "group": "basic",
+      "file": "basic/i.mp3",
+      "commonsTitle": "File:Japanese I.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_I.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "う",
+      "romanization": "u",
+      "group": "basic",
+      "file": "basic/u.mp3",
+      "commonsTitle": "File:Japanese U.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_U.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "え",
+      "romanization": "e",
+      "group": "basic",
+      "file": "basic/e.mp3",
+      "commonsTitle": "File:Ja-E.oga",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJa-E.oga",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "お",
+      "romanization": "o",
+      "group": "basic",
+      "file": "basic/o.mp3",
+      "commonsTitle": "File:Japanese O.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_O.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "か",
+      "romanization": "ka",
+      "group": "basic",
+      "file": "basic/ka.mp3",
+      "commonsTitle": "File:Ja-Ka.oga",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJa-Ka.oga",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "き",
+      "romanization": "ki",
+      "group": "basic",
+      "file": "basic/ki.mp3",
+      "commonsTitle": "File:Japanese ki.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ki.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "く",
+      "romanization": "ku",
+      "group": "basic",
+      "file": "basic/ku.mp3",
+      "commonsTitle": "File:Japanese ku.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ku.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "け",
+      "romanization": "ke",
+      "group": "basic",
+      "file": "basic/ke.mp3",
+      "commonsTitle": "File:Japanese ke.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ke.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "こ",
+      "romanization": "ko",
+      "group": "basic",
+      "file": "basic/ko.mp3",
+      "commonsTitle": "File:Japanese ko.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ko.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "さ",
+      "romanization": "sa",
+      "group": "basic",
+      "file": "basic/sa.mp3",
+      "commonsTitle": "File:Japanese sa.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_sa.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "し",
+      "romanization": "shi",
+      "group": "basic",
+      "file": "basic/shi.mp3",
+      "commonsTitle": "File:Japanese shi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_shi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "す",
+      "romanization": "su",
+      "group": "basic",
+      "file": "basic/su.mp3",
+      "commonsTitle": "File:Japanese su.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_su.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "せ",
+      "romanization": "se",
+      "group": "basic",
+      "file": "basic/se.mp3",
+      "commonsTitle": "File:Japanese se.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_se.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "そ",
+      "romanization": "so",
+      "group": "basic",
+      "file": "basic/so.mp3",
+      "commonsTitle": "File:Ja-So.oga",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJa-So.oga",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "た",
+      "romanization": "ta",
+      "group": "basic",
+      "file": "basic/ta.mp3",
+      "commonsTitle": "File:Japanese ta.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ta.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ち",
+      "romanization": "chi",
+      "group": "basic",
+      "file": "basic/chi.mp3",
+      "commonsTitle": "File:Japanese ti.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ti.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "つ",
+      "romanization": "tsu",
+      "group": "basic",
+      "file": "basic/tsu.mp3",
+      "commonsTitle": "File:Japanese tsu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_tsu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "て",
+      "romanization": "te",
+      "group": "basic",
+      "file": "basic/te.mp3",
+      "commonsTitle": "File:Japanese te.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_te.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "と",
+      "romanization": "to",
+      "group": "basic",
+      "file": "basic/to.mp3",
+      "commonsTitle": "File:Japanese to.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_to.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "な",
+      "romanization": "na",
+      "group": "basic",
+      "file": "basic/na.mp3",
+      "commonsTitle": "File:Japanese na.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_na.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "に",
+      "romanization": "ni",
+      "group": "basic",
+      "file": "basic/ni.mp3",
+      "commonsTitle": "File:Japanese ni.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ni.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぬ",
+      "romanization": "nu",
+      "group": "basic",
+      "file": "basic/nu.mp3",
+      "commonsTitle": "File:Japanese nu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_nu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ね",
+      "romanization": "ne",
+      "group": "basic",
+      "file": "basic/ne.mp3",
+      "commonsTitle": "File:Japanese ne.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ne.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "の",
+      "romanization": "no",
+      "group": "basic",
+      "file": "basic/no.mp3",
+      "commonsTitle": "File:Japanese no.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_no.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "は",
+      "romanization": "ha",
+      "group": "basic",
+      "file": "basic/ha.mp3",
+      "commonsTitle": "File:Japanese ha.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ha.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ひ",
+      "romanization": "hi",
+      "group": "basic",
+      "file": "basic/hi.mp3",
+      "commonsTitle": "File:Japanese hi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_hi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ふ",
+      "romanization": "fu",
+      "group": "basic",
+      "file": "basic/fu.mp3",
+      "commonsTitle": "File:Japanese hu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_hu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "へ",
+      "romanization": "he",
+      "group": "basic",
+      "file": "basic/he.mp3",
+      "commonsTitle": "File:Japanese he.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_he.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ほ",
+      "romanization": "ho",
+      "group": "basic",
+      "file": "basic/ho.mp3",
+      "commonsTitle": "File:Japanese ho.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ho.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ま",
+      "romanization": "ma",
+      "group": "basic",
+      "file": "basic/ma.mp3",
+      "commonsTitle": "File:Japanese ma.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ma.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "み",
+      "romanization": "mi",
+      "group": "basic",
+      "file": "basic/mi.mp3",
+      "commonsTitle": "File:Japanese mi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_mi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "む",
+      "romanization": "mu",
+      "group": "basic",
+      "file": "basic/mu.mp3",
+      "commonsTitle": "File:Japanese mu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_mu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "め",
+      "romanization": "me",
+      "group": "basic",
+      "file": "basic/me.mp3",
+      "commonsTitle": "File:Japanese me.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_me.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "も",
+      "romanization": "mo",
+      "group": "basic",
+      "file": "basic/mo.mp3",
+      "commonsTitle": "File:Japanese mo.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_mo.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "や",
+      "romanization": "ya",
+      "group": "basic",
+      "file": "basic/ya.mp3",
+      "commonsTitle": "File:Japanese ya.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ya.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ゆ",
+      "romanization": "yu",
+      "group": "basic",
+      "file": "basic/yu.mp3",
+      "commonsTitle": "File:Japanese yu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_yu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "よ",
+      "romanization": "yo",
+      "group": "basic",
+      "file": "basic/yo.mp3",
+      "commonsTitle": "File:Japanese yo.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_yo.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ら",
+      "romanization": "ra",
+      "group": "basic",
+      "file": "basic/ra.mp3",
+      "commonsTitle": "File:Japanese ra.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ra.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "り",
+      "romanization": "ri",
+      "group": "basic",
+      "file": "basic/ri.mp3",
+      "commonsTitle": "File:Japanese ri.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ri.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "る",
+      "romanization": "ru",
+      "group": "basic",
+      "file": "basic/ru.mp3",
+      "commonsTitle": "File:Japanese ru.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ru.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "れ",
+      "romanization": "re",
+      "group": "basic",
+      "file": "basic/re.mp3",
+      "commonsTitle": "File:Japanese re.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_re.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ろ",
+      "romanization": "ro",
+      "group": "basic",
+      "file": "basic/ro.mp3",
+      "commonsTitle": "File:Japanese ro.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ro.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "わ",
+      "romanization": "wa",
+      "group": "basic",
+      "file": "basic/wa.mp3",
+      "commonsTitle": "File:Japanese wa.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_wa.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "を",
+      "romanization": "wo",
+      "group": "basic",
+      "file": "basic/wo.mp3",
+      "commonsTitle": "File:Japanese wo.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_wo.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ん",
+      "romanization": "n",
+      "group": "basic",
+      "file": "basic/n.mp3",
+      "commonsTitle": "File:Japanese N.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_N.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "が",
+      "romanization": "ga",
+      "group": "voiced",
+      "file": "voiced/ga.mp3",
+      "commonsTitle": "File:Japanese ga.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ga.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぎ",
+      "romanization": "gi",
+      "group": "voiced",
+      "file": "voiced/gi.mp3",
+      "commonsTitle": "File:Japanese gi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_gi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぐ",
+      "romanization": "gu",
+      "group": "voiced",
+      "file": "voiced/gu.mp3",
+      "commonsTitle": "File:Japanese gu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_gu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "げ",
+      "romanization": "ge",
+      "group": "voiced",
+      "file": "voiced/ge.mp3",
+      "commonsTitle": "File:Japanese ge.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ge.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ご",
+      "romanization": "go",
+      "group": "voiced",
+      "file": "voiced/go.mp3",
+      "commonsTitle": "File:Japanese go.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_go.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ざ",
+      "romanization": "za",
+      "group": "voiced",
+      "file": "voiced/za.mp3",
+      "commonsTitle": "File:Japanese za.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_za.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "じ",
+      "romanization": "ji",
+      "group": "voiced",
+      "file": "voiced/ji.mp3",
+      "commonsTitle": "File:Japanese zi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_zi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ず",
+      "romanization": "zu",
+      "group": "voiced",
+      "file": "voiced/zu.mp3",
+      "commonsTitle": "File:Japanese zu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_zu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぜ",
+      "romanization": "ze",
+      "group": "voiced",
+      "file": "voiced/ze.mp3",
+      "commonsTitle": "File:Japanese ze.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ze.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぞ",
+      "romanization": "zo",
+      "group": "voiced",
+      "file": "voiced/zo.mp3",
+      "commonsTitle": "File:Japanese zo.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_zo.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "だ",
+      "romanization": "da",
+      "group": "voiced",
+      "file": "voiced/da.mp3",
+      "commonsTitle": "File:Japanese da.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_da.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぢ",
+      "romanization": "di",
+      "group": "voiced",
+      "file": "voiced/di.mp3",
+      "commonsTitle": "File:Japanese di.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_di.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "づ",
+      "romanization": "du",
+      "group": "voiced",
+      "file": "voiced/du.mp3",
+      "commonsTitle": "File:Japanese du.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_du.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "で",
+      "romanization": "de",
+      "group": "voiced",
+      "file": "voiced/de.mp3",
+      "commonsTitle": "File:Japanese de.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_de.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ど",
+      "romanization": "do",
+      "group": "voiced",
+      "file": "voiced/do.mp3",
+      "commonsTitle": "File:Japanese do.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_do.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ば",
+      "romanization": "ba",
+      "group": "voiced",
+      "file": "voiced/ba.mp3",
+      "commonsTitle": "File:Japanese ba.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_ba.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "び",
+      "romanization": "bi",
+      "group": "voiced",
+      "file": "voiced/bi.mp3",
+      "commonsTitle": "File:Japanese bi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_bi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぶ",
+      "romanization": "bu",
+      "group": "voiced",
+      "file": "voiced/bu.mp3",
+      "commonsTitle": "File:Japanese bu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_bu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "べ",
+      "romanization": "be",
+      "group": "voiced",
+      "file": "voiced/be.mp3",
+      "commonsTitle": "File:Japanese be.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_be.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぼ",
+      "romanization": "bo",
+      "group": "voiced",
+      "file": "voiced/bo.mp3",
+      "commonsTitle": "File:Japanese bo.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_bo.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぱ",
+      "romanization": "pa",
+      "group": "semi-voiced",
+      "file": "semi-voiced/pa.mp3",
+      "commonsTitle": "File:Japanese pa.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_pa.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぴ",
+      "romanization": "pi",
+      "group": "semi-voiced",
+      "file": "semi-voiced/pi.mp3",
+      "commonsTitle": "File:Japanese pi.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_pi.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぷ",
+      "romanization": "pu",
+      "group": "semi-voiced",
+      "file": "semi-voiced/pu.mp3",
+      "commonsTitle": "File:Japanese pu.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_pu.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぺ",
+      "romanization": "pe",
+      "group": "semi-voiced",
+      "file": "semi-voiced/pe.mp3",
+      "commonsTitle": "File:Japanese pe.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_pe.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "ぽ",
+      "romanization": "po",
+      "group": "semi-voiced",
+      "file": "semi-voiced/po.mp3",
+      "commonsTitle": "File:Japanese po.ogg",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJapanese_po.ogg",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    },
+    {
+      "kana": "りゅ",
+      "romanization": "ryu",
+      "group": "yoon",
+      "file": "yoon/ryu.mp3",
+      "commonsTitle": "File:Ja-Ryu.oga",
+      "source": "https://commons.wikimedia.org/wiki/File%3AJa-Ryu.oga",
+      "license": "See Wikimedia Commons source page",
+      "artist": "See Wikimedia Commons source page"
+    }
+  ],
+  "missingYoon": [
+    {
+      "kana": "きゃ",
+      "romanization": "kya"
+    },
+    {
+      "kana": "きゅ",
+      "romanization": "kyu"
+    },
+    {
+      "kana": "きょ",
+      "romanization": "kyo"
+    },
+    {
+      "kana": "しゃ",
+      "romanization": "sha"
+    },
+    {
+      "kana": "しゅ",
+      "romanization": "shu"
+    },
+    {
+      "kana": "しょ",
+      "romanization": "sho"
+    },
+    {
+      "kana": "ちゃ",
+      "romanization": "cha"
+    },
+    {
+      "kana": "ちゅ",
+      "romanization": "chu"
+    },
+    {
+      "kana": "ちょ",
+      "romanization": "cho"
+    },
+    {
+      "kana": "にゃ",
+      "romanization": "nya"
+    },
+    {
+      "kana": "にゅ",
+      "romanization": "nyu"
+    },
+    {
+      "kana": "にょ",
+      "romanization": "nyo"
+    },
+    {
+      "kana": "ひゃ",
+      "romanization": "hya"
+    },
+    {
+      "kana": "ひゅ",
+      "romanization": "hyu"
+    },
+    {
+      "kana": "ひょ",
+      "romanization": "hyo"
+    },
+    {
+      "kana": "みゃ",
+      "romanization": "mya"
+    },
+    {
+      "kana": "みゅ",
+      "romanization": "myu"
+    },
+    {
+      "kana": "みょ",
+      "romanization": "myo"
+    },
+    {
+      "kana": "りゃ",
+      "romanization": "rya"
+    },
+    {
+      "kana": "りょ",
+      "romanization": "ryo"
+    },
+    {
+      "kana": "ぎゃ",
+      "romanization": "gya"
+    },
+    {
+      "kana": "ぎゅ",
+      "romanization": "gyu"
+    },
+    {
+      "kana": "ぎょ",
+      "romanization": "gyo"
+    },
+    {
+      "kana": "じゃ",
+      "romanization": "ja"
+    },
+    {
+      "kana": "じゅ",
+      "romanization": "ju"
+    },
+    {
+      "kana": "じょ",
+      "romanization": "jo"
+    },
+    {
+      "kana": "びゃ",
+      "romanization": "bya"
+    },
+    {
+      "kana": "びゅ",
+      "romanization": "byu"
+    },
+    {
+      "kana": "びょ",
+      "romanization": "byo"
+    },
+    {
+      "kana": "ぴゃ",
+      "romanization": "pya"
+    },
+    {
+      "kana": "ぴゅ",
+      "romanization": "pyu"
+    },
+    {
+      "kana": "ぴょ",
+      "romanization": "pyo"
+    }
+  ]
+}
