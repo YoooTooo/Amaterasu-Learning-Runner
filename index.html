@@ -29,7 +29,7 @@
     .question-card{display:grid;grid-template-columns:75px 1fr 52px;align-items:center;min-height:86px;border:2px solid #d1c1a7;border-radius:17px;background:#fffdf7;overflow:hidden}.kana{font-family:"Yu Mincho",serif;font-size:54px;font-weight:900;text-align:center}.instruction{padding:0 8px;border-left:1px solid #dfd3c0;text-align:center}.instruction b{display:block;margin-bottom:4px;color:#a6423b;font-size:12px}.instruction span{font-size:10px;color:#756a78}.replay{width:40px;height:40px;border:0;border-radius:50%;background:#eee5d6;font-size:18px;cursor:pointer}.replay:disabled{opacity:.35}
     .jump{width:100%;height:64px;margin-top:9px;border:0;border-radius:17px;background:linear-gradient(#3f3449,#251e2b);box-shadow:0 6px 0 #110e14;color:white;font-weight:1000;letter-spacing:.1em;cursor:pointer;transition:.1s}.jump.ready{background:linear-gradient(#f5c551,#e98b34);box-shadow:0 6px 0 #aa5427;color:#30202b;transform:translateY(-2px)}.jump:disabled{opacity:.5;cursor:default}
     .result{align-items:center;justify-content:center;padding:22px;background:linear-gradient(#31243c,#d75b4b)}.result-card{max-height:95vh;overflow:auto}.result-card h2{margin:5px 0 2px;font-family:"Yu Mincho",serif;font-size:34px}.result-sub{font-size:11px;color:#726777}.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0}.stat{padding:13px 6px;border:1px solid #ded1bc;border-radius:13px;background:#fff}.stat small{display:block;margin-bottom:5px;color:#827683;font-size:8px;font-weight:900}.stat strong{font-size:20px}.learned{text-align:left;margin:0 0 16px}.learned h3{font-size:11px}.kana-list{display:flex;flex-wrap:wrap;gap:6px}.kana-tag{min-width:32px;padding:6px;border-radius:8px;background:#eee5d5;text-align:center;font-family:"Yu Mincho",serif;font-weight:900}.tip{margin:0 0 14px;padding:10px;border-radius:10px;background:#fff0cf;color:#715127;font-size:10px;line-height:1.6}
-    .flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:white}.flash.on{animation:flash .45s}@keyframes flash{30%{opacity:.7}100%{opacity:0}}
+    .flash{position:absolute;inset:0;pointer-events:none;opacity:0;background:white}.flash.on{animation:flash .45s}.flash.damage{background:#ff392e;animation:damageFlash .42s}@keyframes flash{30%{opacity:.7}100%{opacity:0}}@keyframes damageFlash{0%{opacity:.68}28%{opacity:.12}45%{opacity:.5}100%{opacity:0}}
 
     /* Retro pixel UI layer */
     :root{--pixel-dark:#171526;--pixel-deep:#27203a;--pixel-light:#fff4cd;--pixel-gold:#ffc94a;--pixel-red:#e84b3c;--pixel-green:#54d18b}
@@ -228,7 +228,7 @@
   const correctAudio = new Map([...milestoneSounds.values(),...climaxSounds].map(src=>{
     const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
   }));
-  const state = {running:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]};
+  const state = {running:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
 
@@ -262,7 +262,14 @@
   function updateHud(){const text=tr();ui.heart.textContent='♥ '.repeat(state.hearts).trim()||'—';ui.combo.innerHTML=`<small>${text.combo}</small>${state.combo}`;ui.distance.innerHTML=`<small>${text.dist}</small>${Math.floor(state.distance)}`;const si=stageIndex(),stageName=text.stages[si];ui.stage.textContent=`${text.stage} ${si+1}・${stageName}`;if(si!==state.stage){state.stage=si;flash();setStatus(`${text.newStage}: ${stageName}`,'good')}}
   function setStatus(text,kind=''){ui.status.textContent=text;ui.status.className='status '+kind}
   function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?tr().jumpReady:tr().jump}
-  function flash(){ui.flash.classList.remove('on');void ui.flash.offsetWidth;ui.flash.classList.add('on')}
+  function flash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('on')}
+  function damageFlash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('damage')}
+  function startHitEffect(){const start=performance.now();state.hitEffect={start,stopEnd:start+160,slowEnd:start+480,end:start+760};state.shake=20;damageFlash()}
+  function knockbackOffset(now){
+    const hit=state.hitEffect;if(!hit||now<hit.stopEnd||now>=hit.end)return 0;
+    const progress=(now-hit.stopEnd)/(hit.end-hit.stopEnd);
+    return -48*Math.sin(Math.PI*progress);
+  }
   function resize(){const r=ui.world.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;ui.canvas.width=Math.round(W*dpr);ui.canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
   new ResizeObserver(resize).observe(ui.world);
 
@@ -348,7 +355,7 @@
         flash();burst(W*.3,H*.6,milestone.color);
       }
     }else{
-      state.hearts--;state.combo=0;state.shake=12;setStatus(tr().miss,'bad');
+      state.hearts--;state.combo=0;startHitEffect();setStatus(tr().miss,'bad');
       setCharacterAnimation(state.hearts<=0?'defeated':'hit',state.hearts<=0?950:680,{form:previousForm});
     }
     updateHud();if(state.hearts<=0){later(endRun,900)}else{later(question,900)}
@@ -364,7 +371,7 @@
     if(state.running)later(question,350);
   }
 
-  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();Object.assign(state,{running:true,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,shake:0,particles:[]});$('tutorial').classList.remove('active');show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(tutorialWasSeen())later(question,850);else later(openTutorial,350)}
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();Object.assign(state,{running:true,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(tutorialWasSeen())later(question,850);else later(openTutorial,350)}
   function endRun(){if(!state.running)return;state.running=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);const text=tr(),resultBackground=stageBackgroundFile(stageIndex());ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
 
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
@@ -388,7 +395,7 @@
     ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
     ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
   }
-  function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
+  function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);if(dt>0)state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
     ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){
@@ -403,8 +410,7 @@
         judge(obstacle.token);
       }
     }
-    const px=playerScreenX(),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
-    const now=performance.now();
+    const now=performance.now(),px=playerScreenX()+knockbackOffset(now),py=Math.max(38,ground-31+state.playerY);if(p.aura){ctx.shadowColor=p.aura;ctx.shadowBlur=28;ctx.fillStyle=p.aura+'55';ctx.beginPath();ctx.arc(px,py,45+Math.sin(state.phaseT*8)*4,0,Math.PI*2);ctx.fill()}ctx.shadowBlur=0;
     if(state.characterAnim&&now>=state.characterAnim.end)state.characterAnim=null;
     const anim=state.characterAnim;
     let form=characterForm(),frame;
@@ -442,7 +448,19 @@
       drawFallbackCharacter(px,py,p);
     }
     state.particles=state.particles.filter(a=>{a.life-=dt;a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=330*dt;if(a.life<=0)return false;ctx.globalAlpha=a.life;ctx.fillStyle=a.color;ctx.fillRect(a.x,a.y,5,5);ctx.globalAlpha=1;return true});ctx.restore()}
-  function loop(now){if(!state.running)return;const dt=Math.min((now-state.last)/1000,.04);state.last=now;state.phaseT+=dt;const p=power();state.distance+=p.speed*dt*.34;state.scroll+=p.speed*dt;state.playerV+=1450*dt;state.playerY+=state.playerV*dt;const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}drawWorld(dt);updateHud();raf=requestAnimationFrame(loop)}
+  function loop(now){
+    if(!state.running)return;
+    const dt=Math.min((now-state.last)/1000,.04);state.last=now;
+    let timeScale=1;
+    if(state.hitEffect){
+      if(now>=state.hitEffect.end)state.hitEffect=null;
+      else if(now<state.hitEffect.stopEnd)timeScale=0;
+      else if(now<state.hitEffect.slowEnd)timeScale=.3;
+    }
+    const step=dt*timeScale;state.phaseT+=step;const p=power();state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
+    const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}
+    drawWorld(step);updateHud();raf=requestAnimationFrame(loop);
+  }
 
   document.querySelectorAll('.language-choice').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
   $('tutorialStart').addEventListener('click',closeTutorial);
