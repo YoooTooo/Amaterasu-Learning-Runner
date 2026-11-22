@@ -60,9 +60,9 @@
     .stats{gap:8px}.stat{border:3px solid #fff4cd;border-radius:0;background:#2d2540;color:#fff;box-shadow:3px 3px 0 #080711}.stat small{color:#ffc94a;font-size:10px}.stat strong{font-family:"Courier New",monospace}.learned h3{font-size:13px}.kana-tag{border:2px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;font-family:"MS Gothic",monospace}.tip{border:3px solid #a06c35;border-radius:0;background:#fff0b5;color:#50351f;font-size:12px}
     .language-panel{position:absolute;z-index:3;top:max(14px,env(safe-area-inset-top));left:12px;right:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;max-width:460px;margin:auto}.language-choice{height:38px;padding:0 3px;border:2px solid #fff4cd;border-radius:0;background:#171526;color:#c7bdd4;box-shadow:3px 3px 0 #080711;font-size:12px;cursor:pointer}.language-choice.active{background:#ffc94a;color:#241a35;border-color:#fff}.language-choice:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #080711}
     .title .title-card{padding:34px 24px 26px}.title-rule{min-height:44px;margin:14px 0 22px;color:#fff4cd;font-size:16px;line-height:1.5}.title-control{margin-top:18px;color:#aaa0bd;font-size:12px;letter-spacing:.1em}
-    .question-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:10px;align-items:stretch}.kana-panel{position:relative;display:grid;place-items:center;min-height:108px;border:4px solid #fff4cd;background:#171526;box-shadow:5px 5px 0 #090711}.kana-panel .replay{position:absolute;right:7px;bottom:7px}.question-layout .jump{height:auto;min-height:108px;margin:0}
+    .question-layout{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}.kana-panel{position:relative;display:grid;place-items:center;min-height:108px;border:4px solid #fff4cd;background:#171526;box-shadow:5px 5px 0 #090711}.kana-panel .replay{position:absolute;right:7px;bottom:7px}.question-layout .jump{justify-self:center;width:108px;height:108px;min-height:0;margin:0;border-radius:50%;font-size:13px;line-height:1.25}
     .tutorial{position:absolute;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(10,8,18,.78)}.tutorial.active{display:flex}.tutorial-panel{width:100%;max-width:390px;padding:26px 20px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center}.tutorial-panel h2{margin:0 0 20px;color:#ffc94a;font-size:22px}.tutorial-rule{display:grid;gap:10px;margin-bottom:22px}.tutorial-rule p{margin:0;padding:12px;border:2px solid #5c4b71;background:#27203a;font-size:15px}.tutorial-rule b{color:#ffc94a}
-    @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.kana-panel,.question-layout .jump{min-height:88px}.kana{font-size:44px}.status{top:96px}}
+    @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.kana-panel{min-height:88px}.question-layout .jump{width:88px;height:88px}.kana{font-size:44px}.status{top:96px}}
   </style>
 </head>
 <body>
@@ -169,7 +169,6 @@
   applyTitleLanguage(titleLanguage);
   function tr(){return locales[titleLanguage]}
   const kanaSet = ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','れ','ろ','わ','を','ん'];
-  const kanaAudioSlugs = ['a','i','u','e','o','ka','ki','ku','ke','ko','sa','shi','su','se','so','ta','chi','tsu','te','to','na','ni','nu','ne','no','ha','hi','fu','he','ho','ma','mi','mu','me','mo','ya','yu','yo','ra','ri','ru','re','ro','wa','wo','n'];
   const stages = [
     {at:0,name:'神社',backgrounds:['1.png'],sky:['#67b8ec','#d8eff7'],ground:'#65513e',accent:'#f2c35e',jump:['石灯籠','石'],duck:['注連縄']},
     {at:700,name:'桜並木',backgrounds:['2.png'],sky:['#79c8ee','#f7d8df'],ground:'#66513c',accent:'#f4a9be',jump:['落ちた枝','庭石'],duck:['垂れ下がる桜の枝']},
@@ -229,10 +228,6 @@
   const correctAudio = new Map([...milestoneSounds.values(),...climaxSounds].map(src=>{
     const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
   }));
-  const kanaAudio = new Map(kanaSet.map((kana,index)=>{
-    const audio=new Audio(`asset/audio/kana/basic/${kanaAudioSlugs[index]}.mp3`);audio.preload='metadata';audio.volume=1;return [kana,audio];
-  }));
-  let currentKanaAudio=null;
   const state = {running:false,tutorialActive:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
@@ -322,18 +317,6 @@
   }
   function speak(kana){
     if(state.muted)return;
-    if(currentKanaAudio){currentKanaAudio.pause();currentKanaAudio.currentTime=0;currentKanaAudio=null}
-    const recorded=kanaAudio.get(kana);
-    if(recorded){
-      if('speechSynthesis' in window)speechSynthesis.cancel();
-      currentKanaAudio=recorded;recorded.currentTime=0;state.voiceSpeaking=true;
-      recorded.onended=()=>{if(currentKanaAudio===recorded)currentKanaAudio=null;state.voiceSpeaking=false};
-      recorded.onerror=()=>{if(currentKanaAudio===recorded)currentKanaAudio=null;state.voiceSpeaking=false};
-      recorded.play().catch(()=>{if(currentKanaAudio===recorded)currentKanaAudio=null;state.voiceSpeaking=false;speakWithBrowserVoice(kana)});return;
-    }
-    speakWithBrowserVoice(kana);
-  }
-  function speakWithBrowserVoice(kana){
     if('speechSynthesis' in window){
       speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(kana);
       u.lang='ja-JP';u.rate=.72;u.pitch=1.08;u.volume=1;
@@ -380,17 +363,17 @@
   function burst(x,y,color){for(let i=0;i<28;i++)state.particles.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.7)*260,life:1,color})}
   function toggleReady(){if(state.running&&state.accepting)setReady(!state.jumpReady)}
 
-  function tutorialWasSeen(){try{return localStorage.getItem('amaterasu-tutorial-seen-v1')==='yes'}catch(_){return false}}
+  function tutorialWasSeen(){try{return localStorage.getItem('amaterasu-tutorial-seen-v2')==='yes'}catch(_){return false}}
   function openTutorial(){state.tutorialActive=true;state.phase='idle';state.phaseT=0;state.scroll=0;state.distance=0;state.playerY=0;state.playerV=0;state.wasAirborne=false;state.characterAnim=null;$('tutorial').classList.add('active');$('tutorialStart').focus()}
   function closeTutorial(){
     $('tutorial').classList.remove('active');
     state.tutorialActive=false;state.last=performance.now();
-    try{localStorage.setItem('amaterasu-tutorial-seen-v1','yes')}catch(_){}
+    try{localStorage.setItem('amaterasu-tutorial-seen-v2','yes')}catch(_){}
     if(state.running)later(question,350);
   }
 
-  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if(currentKanaAudio){currentKanaAudio.pause();currentKanaAudio.currentTime=0;currentKanaAudio=null}if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialWasSeen();Object.assign(state,{running:true,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
-  function endRun(){if(!state.running)return;state.running=false;state.tutorialActive=false;state.accepting=false;state.token++;clearTimers();if(currentKanaAudio){currentKanaAudio.pause();currentKanaAudio.currentTime=0;currentKanaAudio=null}if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);const text=tr(),resultBackground=stageBackgroundFile(stageIndex());ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialWasSeen();Object.assign(state,{running:true,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
+  function endRun(){if(!state.running)return;state.running=false;state.tutorialActive=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);const text=tr(),resultBackground=stageBackgroundFile(stageIndex());ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
 
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
   function drawSky(s){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,s.sky[0]);g.addColorStop(1,s.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);ctx.fillStyle=s.accent+'aa';ctx.beginPath();ctx.arc(W*.78,H*.2,45,0,Math.PI*2);ctx.fill()}
@@ -446,7 +429,7 @@
       frame=CHARACTER_FRAMES.land;
     }else if(state.playerY<-3){
       frame=CHARACTER_FRAMES.jump;
-    }else if(state.tutorialActive||state.phase==='idle'){
+    }else if(state.tutorialActive){
       frame=CHARACTER_FRAMES.stand;
     }else{
       frame=CHARACTER_FRAMES.walk[Math.floor(state.scroll/18)%CHARACTER_FRAMES.walk.length];
@@ -482,7 +465,7 @@
 
   document.querySelectorAll('.language-choice').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
   $('tutorialStart').addEventListener('click',closeTutorial);
-  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if(currentKanaAudio){currentKanaAudio.pause();currentKanaAudio.currentTime=0;currentKanaAudio=null}if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if(currentKanaAudio){currentKanaAudio.pause();currentKanaAudio.currentTime=0;currentKanaAudio=null}if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
+  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
 })();
 </script>
 </body>
