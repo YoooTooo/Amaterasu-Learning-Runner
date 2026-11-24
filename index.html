@@ -218,7 +218,7 @@
   const obstacleAssets = {
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable'},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
     choochin:{folder:'animate',frames:2,fps:4},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_kintoun:{folder:'animate',frames:2,fps:4},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanuki_spider:{folder:'animate',frames:2,fps:5},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
-    kanban:{folder:'depth',frames:2},take:{folder:'depth',frames:2,scale:1.18},torii:{folder:'depth',frames:2,scale:1.18}
+    kanban:{folder:'depth'},take:{folder:'depth',scale:1.18},torii:{folder:'depth',scale:1.18}
   };
   const obstacleImages={};
   Object.entries(obstacleAssets).forEach(([name,asset])=>{const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${name}.webp`;obstacleImages[name]=img});
@@ -460,7 +460,7 @@
     if(asset&&img?.complete&&img.naturalWidth){
       const frames=asset.frames||1,frame=asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames;
       const baseSize=Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
-      const bottom=obstacle.type==='jump'?ground+5:ground-Math.max(58,H*.1),drawY=bottom-size;
+      const drawY=obstacle.type==='jump'?ground+8-size:ground-Math.max(125,H*.3)-size*.5;
       ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
       ctx.drawImage(img,frame*384,0,384,384,obstacle.x-size*.5,drawY,size,size);ctx.restore();return;
     }

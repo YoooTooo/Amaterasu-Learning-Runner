@@ -20,23 +20,31 @@ async function filesIn(directory) {
     .sort((a, b) => a.localeCompare(b, "en", { numeric: true }));
 }
 
-async function cutOutAndNormalize(source, destination) {
-  const removed = path.join(tempRoot, `${path.basename(source, ".png")}-${Math.random().toString(36).slice(2)}.png`);
+async function cutOut(source, destination) {
   if (path.basename(source).startsWith("take_")) {
     // The bamboo consists of many thin leaves; AI extraction mistakes them for
     // background. These two sources use plain white, so color-key them instead.
-    await execFileAsync("magick", [source, "-alpha", "on", "-fuzz", "18%", "-transparent", "white", removed]);
+    await execFileAsync("magick", [source, "-alpha", "on", "-fuzz", "18%", "-transparent", "white", destination]);
   } else {
-    await execFileAsync("rembg", ["i", source, removed], {
+    await execFileAsync("rembg", ["i", source, destination], {
       env: { ...process.env, NUMBA_CACHE_DIR: path.join(tempRoot, "numba-cache") },
       maxBuffer: 8 * 1024 * 1024,
     });
   }
+}
+
+async function normalize(source, destination) {
   await execFileAsync("magick", [
-    removed, "-trim", "+repage", "-resize", `${contentSize}x${contentSize}>`,
+    source, "-trim", "+repage", "-resize", `${contentSize}x${contentSize}>`,
     "-gravity", "south", "-background", "none", "-extent", `${cellSize}x${cellSize}`,
     destination,
   ]);
+}
+
+async function cutOutAndNormalize(source, destination) {
+  const removed = path.join(tempRoot, `${path.basename(source, ".png")}-${Math.random().toString(36).slice(2)}.png`);
+  await cutOut(source, removed);
+  await normalize(removed, destination);
 }
 
 async function writeWebp(sourceFrames, destination) {
@@ -80,19 +88,33 @@ try {
     }
     for (const [key, frameNames] of groups) {
       const normalizedFrames = [];
-      for (const name of frameNames) {
-        const normalized = path.join(tempRoot, `${type}-${name}`);
-        await cutOutAndNormalize(path.join(sourceRoot, type, name), normalized);
+      if (type === "depth") {
+        const cutoutFrames = [];
+        for (const name of frameNames) {
+          const cutout = path.join(tempRoot, `cutout-${type}-${name}`);
+          await cutOut(path.join(sourceRoot, type, name), cutout);
+          cutoutFrames.push(cutout);
+        }
+        const merged = path.join(tempRoot, `${type}-${key}-merged.png`);
+        const normalized = path.join(tempRoot, `${type}-${key}.png`);
+        await execFileAsync("magick", ["-background", "none", ...cutoutFrames, "-layers", "merge", merged]);
+        await normalize(merged, normalized);
         normalizedFrames.push(normalized);
+      } else {
+        for (const name of frameNames) {
+          const normalized = path.join(tempRoot, `${type}-${name}`);
+          await cutOutAndNormalize(path.join(sourceRoot, type, name), normalized);
+          normalizedFrames.push(normalized);
+        }
       }
       const destination = path.join(outputRoot, type, `${key}.webp`);
       await writeWebp(normalizedFrames, destination);
       manifest[type].push({
-        name: key, file: path.relative(outputRoot, destination), frames: frameNames.length,
+        name: key, file: path.relative(outputRoot, destination), frames: normalizedFrames.length,
         frameWidth: cellSize, frameHeight: cellSize,
         sources: frameNames.map((name) => path.join(type, name)),
       });
-      process.stdout.write(`${type}: ${key} (${frameNames.length} frames)\n`);
+      process.stdout.write(`${type}: ${key} (${normalizedFrames.length} frame${normalizedFrames.length===1?'':'s'})\n`);
     }
   }
 
