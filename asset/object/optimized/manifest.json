@@ -1,0 +1,316 @@
+{
+  "generatedAt": "2026-11-24T12:43:06.125Z",
+  "format": "webp",
+  "cell": {
+    "width": 384,
+    "height": 384
+  },
+  "note": "Original PNG files are preserved outside the optimized directory.",
+  "stable": [
+    {
+      "name": "andon",
+      "file": "stable/andon.webp",
+      "frames": 1,
+      "source": "stable/andon.png",
+      "bytes": 23424
+    },
+    {
+      "name": "gaikotsu",
+      "file": "stable/gaikotsu.webp",
+      "frames": 1,
+      "source": "stable/gaikotsu.png",
+      "bytes": 40630
+    },
+    {
+      "name": "gaikotsu2",
+      "file": "stable/gaikotsu2.webp",
+      "frames": 1,
+      "source": "stable/gaikotsu2.png",
+      "bytes": 29712
+    },
+    {
+      "name": "haka",
+      "file": "stable/haka.webp",
+      "frames": 1,
+      "source": "stable/haka.png",
+      "bytes": 23210
+    },
+    {
+      "name": "jitensha",
+      "file": "stable/jitensha.webp",
+      "frames": 1,
+      "source": "stable/jitensha.png",
+      "bytes": 23190
+    },
+    {
+      "name": "jizou",
+      "file": "stable/jizou.webp",
+      "frames": 1,
+      "source": "stable/jizou.png",
+      "bytes": 29646
+    },
+    {
+      "name": "kibako",
+      "file": "stable/kibako.webp",
+      "frames": 1,
+      "source": "stable/kibako.png",
+      "bytes": 31512
+    },
+    {
+      "name": "kirikabu",
+      "file": "stable/kirikabu.webp",
+      "frames": 1,
+      "source": "stable/kirikabu.png",
+      "bytes": 14760
+    },
+    {
+      "name": "oke",
+      "file": "stable/oke.webp",
+      "frames": 1,
+      "source": "stable/oke.png",
+      "bytes": 22072
+    },
+    {
+      "name": "touboku",
+      "file": "stable/touboku.webp",
+      "frames": 1,
+      "source": "stable/touboku.png",
+      "bytes": 17548
+    }
+  ],
+  "animate": [
+    {
+      "name": "choochin",
+      "file": "animate/choochin.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/choochin_00.png",
+        "animate/choochin_01.png"
+      ],
+      "bytes": 28356
+    },
+    {
+      "name": "gama_sennin",
+      "file": "animate/gama_sennin.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/gama_sennin_00.png",
+        "animate/gama_sennin_01.png"
+      ],
+      "bytes": 77596
+    },
+    {
+      "name": "hitodama",
+      "file": "animate/hitodama.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/hitodama_00.png",
+        "animate/hitodama_01.png"
+      ],
+      "bytes": 32462
+    },
+    {
+      "name": "karasu",
+      "file": "animate/karasu.webp",
+      "frames": 4,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/karasu_00.png",
+        "animate/karasu_01.png",
+        "animate/karasu_02.png",
+        "animate/karasu_04.png"
+      ],
+      "bytes": 65626
+    },
+    {
+      "name": "kitsune_kintoun",
+      "file": "animate/kitsune_kintoun.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/kitsune_kintoun_00.png",
+        "animate/kitsune_kintoun_01.png"
+      ],
+      "bytes": 67596
+    },
+    {
+      "name": "kitsune_sennin",
+      "file": "animate/kitsune_sennin.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/kitsune_sennin_00.png",
+        "animate/kitsune_sennin_01.png"
+      ],
+      "bytes": 69212
+    },
+    {
+      "name": "koi",
+      "file": "animate/koi.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/koi_00.png",
+        "animate/koi_01.png"
+      ],
+      "bytes": 38924
+    },
+    {
+      "name": "roopu",
+      "file": "animate/roopu.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/roopu_00.png",
+        "animate/roopu_01.png"
+      ],
+      "bytes": 13190
+    },
+    {
+      "name": "ryuu",
+      "file": "animate/ryuu.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/ryuu_00.png",
+        "animate/ryuu_01.png"
+      ],
+      "bytes": 41786
+    },
+    {
+      "name": "tako",
+      "file": "animate/tako.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tako_00.png",
+        "animate/tako_01.png"
+      ],
+      "bytes": 55256
+    },
+    {
+      "name": "tanuki_kintoun",
+      "file": "animate/tanuki_kintoun.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tanuki_kintoun_00.png",
+        "animate/tanuki_kintoun_01.png"
+      ],
+      "bytes": 56126
+    },
+    {
+      "name": "tanuki_spider",
+      "file": "animate/tanuki_spider.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tanuki_spider_00.png",
+        "animate/tanuki_spider_01.png"
+      ],
+      "bytes": 66428
+    },
+    {
+      "name": "tanukisennin",
+      "file": "animate/tanukisennin.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tanukisennin_00.png",
+        "animate/tanukisennin_01.png"
+      ],
+      "bytes": 57334
+    },
+    {
+      "name": "te",
+      "file": "animate/te.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/te_00.png",
+        "animate/te_01.png"
+      ],
+      "bytes": 69832
+    },
+    {
+      "name": "tengu",
+      "file": "animate/tengu.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tengu_00.png",
+        "animate/tengu_01.png"
+      ],
+      "bytes": 68524
+    },
+    {
+      "name": "tori",
+      "file": "animate/tori.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "animate/tori_00.png",
+        "animate/tori_01.png"
+      ],
+      "bytes": 42542
+    }
+  ],
+  "depth": [
+    {
+      "name": "kanban",
+      "file": "depth/kanban.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "depth/kanban_00.png",
+        "depth/kanban_01.png"
+      ],
+      "bytes": 40608
+    },
+    {
+      "name": "take",
+      "file": "depth/take.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "depth/take_00.png",
+        "depth/take_01.png"
+      ],
+      "bytes": 127588
+    },
+    {
+      "name": "torii",
+      "file": "depth/torii.webp",
+      "frames": 2,
+      "frameWidth": 384,
+      "frameHeight": 384,
+      "sources": [
+        "depth/torii_00.png",
+        "depth/torii_01.png"
+      ],
+      "bytes": 34132
+    }
+  ],
+  "totalBytes": 1308822
+}
