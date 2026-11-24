@@ -205,6 +205,23 @@
     {at:8500,name:'黄泉の国',backgrounds:['7.png'],sky:['#312842','#765268'],ground:'#29232c',accent:'#9b7acd',jump:['骸骨','黒い岩','地面から伸びる手'],duck:['鬼火'],yomi:true},
     {at:11300,name:'たぬきと狐の仙人の里',backgrounds:['8.png'],sky:['#8bd8ef','#f5e9b6'],ground:'#66594d',accent:'#f4d36d',jump:['雲の塊','ひょうたん','仙桃の籠'],duck:['浮遊物'],endless:true}
   ];
+  const stageObstacleSets = [
+    {jump:['andon','jizou','kanban'],duck:['torii','choochin']},
+    {jump:['kirikabu','touboku','jizou'],duck:['tori','karasu','take']},
+    {jump:['oke','koi','tako'],duck:['choochin','karasu','ryuu']},
+    {jump:['touboku','kirikabu','haka'],duck:['karasu','tori','take']},
+    {jump:['jizou','jitensha','gaikotsu','haka'],duck:['te','hitodama','tanuki_spider']},
+    {jump:['kibako','oke','andon'],duck:['choochin','kanban','tori']},
+    {jump:['gaikotsu','gaikotsu2','haka','te'],duck:['hitodama','tengu','karasu']},
+    {jump:['tanukisennin','gama_sennin','tanuki_spider','tako'],duck:['kitsune_sennin','tanuki_kintoun','kitsune_kintoun','ryuu']}
+  ];
+  const obstacleAssets = {
+    andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable'},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
+    choochin:{folder:'animate',frames:2,fps:4},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_kintoun:{folder:'animate',frames:2,fps:4},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanuki_spider:{folder:'animate',frames:2,fps:5},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
+    kanban:{folder:'depth',frames:2},take:{folder:'depth',frames:2,scale:1.18},torii:{folder:'depth',frames:2,scale:1.18}
+  };
+  const obstacleImages={};
+  Object.entries(obstacleAssets).forEach(([name,asset])=>{const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${name}.webp`;obstacleImages[name]=img});
   const backgroundImages={};
   function loadBackground(file){
     if(!file)return null;
@@ -368,7 +385,7 @@
   }
   function question(){if(!state.running||state.paused||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus(tr().listen);ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stage=stages[stageIndex()];state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=type==='jump'?stage.jump:stage.duck,obstacleName=choices[Math.floor(Math.random()*choices.length)];state.obstacle={type,x:playerScreenX()+150,name:obstacleName,token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+150,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
@@ -438,16 +455,27 @@
     ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
     ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
   }
+  function drawObstacle(obstacle,ground,s){
+    const asset=obstacleAssets[obstacle.assetKey],img=obstacleImages[obstacle.assetKey];
+    if(asset&&img?.complete&&img.naturalWidth){
+      const frames=asset.frames||1,frame=asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames;
+      const baseSize=Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
+      const bottom=obstacle.type==='jump'?ground+5:ground-Math.max(58,H*.1),drawY=bottom-size;
+      ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
+      ctx.drawImage(img,frame*384,0,384,384,obstacle.x-size*.5,drawY,size,size);ctx.restore();return;
+    }
+    if(obstacle.type==='jump'){
+      ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(obstacle.x-30,ground);ctx.lineTo(obstacle.x-19,ground-39);ctx.lineTo(obstacle.x+4,ground-55);ctx.lineTo(obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke();
+    }else{
+      ctx.fillStyle='#8d3c35';ctx.fillRect(obstacle.x-42,ground-118,12,118);ctx.fillRect(obstacle.x+30,ground-118,12,118);ctx.fillRect(obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(obstacle.x-47,ground-119,94,4);
+    }
+  }
   function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);if(dt>0)state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
     ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){
       const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
-      if(obstacle.type==='jump'){
-        ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(obstacle.x-30,ground);ctx.lineTo(obstacle.x-19,ground-39);ctx.lineTo(obstacle.x+4,ground-55);ctx.lineTo(obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke();
-      }else{
-        ctx.fillStyle='#8d3c35';ctx.fillRect(obstacle.x-42,ground-118,12,118);ctx.fillRect(obstacle.x+30,ground-118,12,118);ctx.fillRect(obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(obstacle.x-47,ground-119,94,4);
-      }
+      drawObstacle(obstacle,ground,s);
       if(!obstacle.resolved&&obstacle.x<=playerScreenX()+34){
         obstacle.resolved=true;
         judge(obstacle.token);
