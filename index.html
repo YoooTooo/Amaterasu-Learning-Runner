@@ -502,8 +502,29 @@
       ctx.fillStyle='#8d3c35';ctx.fillRect(obstacle.x-42,ground-118,12,118);ctx.fillRect(obstacle.x+30,ground-118,12,118);ctx.fillRect(obstacle.x-52,ground-122,104,15);ctx.fillStyle='#dca94e';ctx.fillRect(obstacle.x-47,ground-119,94,4);
     }
   }
+  function drawWaveStageBridge(ground){
+    const plankW=46,offset=state.scroll%plankW;
+    ctx.save();
+    // Keep the bridge entirely below the running line so obstacles remain unobstructed.
+    ctx.fillStyle='#241711';ctx.fillRect(0,ground-5,W,H-ground+5);
+    ctx.fillStyle='#ad7746';ctx.fillRect(0,ground-4,W,7);
+    for(let x=-offset-plankW;x<W+plankW;x+=plankW){
+      const alternate=Math.floor((x+offset)/plankW)%2===0;
+      ctx.fillStyle=alternate?'#704525':'#80512c';
+      ctx.fillRect(x,ground+3,plankW-2,H-ground-3);
+      ctx.strokeStyle='rgba(36,19,12,.48)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x+plankW-2,ground+3);ctx.lineTo(x+plankW-2,H);ctx.stroke();
+      ctx.fillStyle='rgba(230,181,105,.22)';ctx.fillRect(x+5,ground+11,plankW-13,2);
+    }
+    ctx.fillStyle='#3b2418';ctx.fillRect(0,ground+41,W,9);
+    ctx.fillStyle='#bb8150';ctx.fillRect(0,ground+41,W,3);
+    for(let x=-(state.scroll%92);x<W+92;x+=92){
+      ctx.fillStyle='#d2a16b';ctx.beginPath();ctx.arc(x+23,ground+20,2.4,0,Math.PI*2);ctx.fill();
+    }
+    ctx.restore();
+  }
   function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);if(dt>0)state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
-    ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}
+    if(si===2){drawWaveStageBridge(ground)}else{ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){
       const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
