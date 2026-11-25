@@ -274,6 +274,7 @@
   const state = {running:false,paused:false,tutorialActive:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
+  const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
   function later(fn,ms){const id=setTimeout(fn,ms);timers.push(id);return id} function clearTimers(){timers.forEach(clearTimeout);timers=[]}
@@ -385,7 +386,7 @@
   }
   function question(){if(!state.running||state.paused||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus(tr().listen);ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+150,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=-620;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+OBSTACLE_SPAWN_AHEAD,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=JUMP_VELOCITY;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;
@@ -462,7 +463,7 @@
       if((isDepth&&layer!=='back'&&layer!=='front')||(!isDepth&&layer==='front'))return;
       const frames=asset.frames||1,frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
       const baseSize=isDepth?Math.max(158,Math.min(210,W*.47)):Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
-      const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-Math.max(125,H*.3)-size*.5);
+      const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-AIR_OBSTACLE_HEIGHT-size*.5);
       ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
       ctx.drawImage(img,frame*384,0,384,384,obstacle.x-size*.5,drawY,size,size);ctx.restore();return;
     }
@@ -479,7 +480,7 @@
     if(state.obstacle){
       const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
       drawObstacle(obstacle,ground,s,'back');
-      if(!obstacle.resolved&&obstacle.x<=playerScreenX()+34){
+      if(!obstacle.resolved&&obstacle.x<=playerScreenX()+OBSTACLE_CONTACT_AHEAD){
         obstacle.resolved=true;
         judge(obstacle.token);
       }
