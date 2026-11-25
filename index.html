@@ -206,7 +206,7 @@
     {at:11300,name:'たぬきと狐の仙人の里',backgrounds:['8.png'],sky:['#8bd8ef','#f5e9b6'],ground:'#66594d',accent:'#f4d36d',jump:['雲の塊','ひょうたん','仙桃の籠'],duck:['浮遊物'],endless:true}
   ];
   const stageObstacleSets = [
-    {jump:['andon','jizou','kanban'],duck:['torii','choochin']},
+    {jump:['andon','jizou','kirikabu'],duck:['torii','choochin']},
     {jump:['kirikabu','touboku','jizou'],duck:['tori','karasu','take']},
     {jump:['oke','koi','tako'],duck:['choochin','karasu','ryuu']},
     {jump:['touboku','kirikabu','haka'],duck:['karasu','tori','take']},
@@ -218,7 +218,7 @@
   const obstacleAssets = {
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable'},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
     choochin:{folder:'animate',frames:2,fps:4},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_kintoun:{folder:'animate',frames:2,fps:4},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanuki_spider:{folder:'animate',frames:2,fps:5},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
-    kanban:{folder:'depth'},take:{folder:'depth',scale:1.18},torii:{folder:'depth',scale:1.18}
+    kanban:{folder:'depth',frames:2,scale:1.18},take:{folder:'depth',frames:2,scale:1.28},torii:{folder:'depth',frames:2,scale:1.28}
   };
   const obstacleImages={};
   Object.entries(obstacleAssets).forEach(([name,asset])=>{const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${name}.webp`;obstacleImages[name]=img});
@@ -455,15 +455,18 @@
     ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
     ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
   }
-  function drawObstacle(obstacle,ground,s){
+  function drawObstacle(obstacle,ground,s,layer='back'){
     const asset=obstacleAssets[obstacle.assetKey],img=obstacleImages[obstacle.assetKey];
     if(asset&&img?.complete&&img.naturalWidth){
-      const frames=asset.frames||1,frame=asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames;
-      const baseSize=Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
-      const drawY=obstacle.type==='jump'?ground+8-size:ground-Math.max(125,H*.3)-size*.5;
+      const isDepth=asset.folder==='depth';
+      if((isDepth&&layer!=='back'&&layer!=='front')||(!isDepth&&layer==='front'))return;
+      const frames=asset.frames||1,frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
+      const baseSize=isDepth?Math.max(158,Math.min(210,W*.47)):Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
+      const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-Math.max(125,H*.3)-size*.5);
       ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
       ctx.drawImage(img,frame*384,0,384,384,obstacle.x-size*.5,drawY,size,size);ctx.restore();return;
     }
+    if(layer==='front')return;
     if(obstacle.type==='jump'){
       ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(obstacle.x-30,ground);ctx.lineTo(obstacle.x-19,ground-39);ctx.lineTo(obstacle.x+4,ground-55);ctx.lineTo(obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke();
     }else{
@@ -475,7 +478,7 @@
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){
       const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
-      drawObstacle(obstacle,ground,s);
+      drawObstacle(obstacle,ground,s,'back');
       if(!obstacle.resolved&&obstacle.x<=playerScreenX()+34){
         obstacle.resolved=true;
         judge(obstacle.token);
@@ -518,6 +521,7 @@
       // Lightweight fallback shown only while the external sprite is loading.
       drawFallbackCharacter(px,py,p);
     }
+    if(state.obstacle)drawObstacle(state.obstacle,ground,s,'front');
     state.particles=state.particles.filter(a=>{a.life-=dt;a.x+=a.vx*dt;a.y+=a.vy*dt;a.vy+=330*dt;if(a.life<=0)return false;ctx.globalAlpha=a.life;ctx.fillStyle=a.color;ctx.fillRect(a.x,a.y,5,5);ctx.globalAlpha=1;return true});ctx.restore()}
   function loop(now){
     if(!state.running||state.paused)return;

@@ -41,6 +41,16 @@ async function normalize(source, destination) {
   ]);
 }
 
+async function normalizeDepthLayer(source, destination) {
+  // Depth pairs share one coordinate system. Keep the full source canvas so
+  // frame 00 and frame 01 line up when drawn behind/in front of the player.
+  await execFileAsync("magick", [
+    source, "-resize", `${contentSize}x${contentSize}>`,
+    "-gravity", "center", "-background", "none", "-extent", `${cellSize}x${cellSize}`,
+    destination,
+  ]);
+}
+
 async function cutOutAndNormalize(source, destination) {
   const removed = path.join(tempRoot, `${path.basename(source, ".png")}-${Math.random().toString(36).slice(2)}.png`);
   await cutOut(source, removed);
@@ -89,17 +99,13 @@ try {
     for (const [key, frameNames] of groups) {
       const normalizedFrames = [];
       if (type === "depth") {
-        const cutoutFrames = [];
         for (const name of frameNames) {
           const cutout = path.join(tempRoot, `cutout-${type}-${name}`);
+          const normalized = path.join(tempRoot, `${type}-${name}`);
           await cutOut(path.join(sourceRoot, type, name), cutout);
-          cutoutFrames.push(cutout);
+          await normalizeDepthLayer(cutout, normalized);
+          normalizedFrames.push(normalized);
         }
-        const merged = path.join(tempRoot, `${type}-${key}-merged.png`);
-        const normalized = path.join(tempRoot, `${type}-${key}.png`);
-        await execFileAsync("magick", ["-background", "none", ...cutoutFrames, "-layers", "merge", merged]);
-        await normalize(merged, normalized);
-        normalizedFrames.push(normalized);
       } else {
         for (const name of frameNames) {
           const normalized = path.join(tempRoot, `${type}-${name}`);

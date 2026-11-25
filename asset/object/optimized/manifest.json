@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T14:04:06.752Z",
+  "generatedAt": "2026-11-25T02:18:11.519Z",
   "format": "webp",
   "cell": {
     "width": 384,
@@ -278,39 +278,39 @@
     {
       "name": "kanban",
       "file": "depth/kanban.webp",
-      "frames": 1,
+      "frames": 2,
       "frameWidth": 384,
       "frameHeight": 384,
       "sources": [
         "depth/kanban_00.png",
         "depth/kanban_01.png"
       ],
-      "bytes": 23002
+      "bytes": 23534
     },
     {
       "name": "take",
       "file": "depth/take.webp",
-      "frames": 1,
+      "frames": 2,
       "frameWidth": 384,
       "frameHeight": 384,
       "sources": [
         "depth/take_00.png",
         "depth/take_01.png"
       ],
-      "bytes": 82678
+      "bytes": 118986
     },
     {
       "name": "torii",
       "file": "depth/torii.webp",
-      "frames": 1,
+      "frames": 2,
       "frameWidth": 384,
       "frameHeight": 384,
       "sources": [
         "depth/torii_00.png",
         "depth/torii_01.png"
       ],
-      "bytes": 29002
+      "bytes": 28546
     }
   ],
-  "totalBytes": 1241176
+  "totalBytes": 1277560
 }
