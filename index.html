@@ -206,22 +206,23 @@
     {at:11300,name:'たぬきと狐の仙人の里',backgrounds:['8.png'],sky:['#8bd8ef','#f5e9b6'],ground:'#66594d',accent:'#f4d36d',jump:['雲の塊','ひょうたん','仙桃の籠'],duck:['浮遊物'],endless:true}
   ];
   const stageObstacleSets = [
-    {jump:['andon','jizou','kirikabu'],duck:['torii','choochin']},
-    {jump:['kirikabu','touboku','jizou'],duck:['tori','karasu','take']},
-    {jump:['oke','koi','tako'],duck:['choochin','karasu','ryuu']},
-    {jump:['touboku','kirikabu','haka'],duck:['karasu','tori','take']},
-    {jump:['jizou','jitensha','gaikotsu','haka'],duck:['te','hitodama','tanuki_spider']},
-    {jump:['kibako','oke','andon'],duck:['choochin','kanban','tori']},
-    {jump:['gaikotsu','gaikotsu2','haka','te'],duck:['hitodama','tengu','karasu']},
-    {jump:['tanukisennin','gama_sennin','tanuki_spider','tako'],duck:['kitsune_sennin','tanuki_kintoun','kitsune_kintoun','ryuu']}
+    {jump:['rock','kirikabu','andon'],duck:['choochin','torii']},
+    {jump:['touboku','jitensha'],duck:['sakura_branch','kanban']},
+    {jump:['kibako','oke'],duck:['tori','tako','karasu']},
+    {jump:['kirikabu','rock','jizou'],duck:['torii','tako']},
+    {jump:['jizou','jitensha','kibako'],duck:['karasu','roopu','take']},
+    {jump:['oke','jizou','andon','kibako','andon'],duck:['choochin','torii','take','tako','sakura_branch','kanban']},
+    {jump:['gaikotsu','te','haka','andon','nihon_ningyo'],duck:['hitodama','spirit','te_down']},
+    {jump:['tanukisennin','tanukisennin','koi','gama_sennin'],duck:['tanuki_kintoun','kitsune_sennin','tanukisennin','ryuu','tengu']}
   ];
   const obstacleAssets = {
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable'},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
-    choochin:{folder:'animate',frames:2,fps:4},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_kintoun:{folder:'animate',frames:2,fps:4},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanuki_spider:{folder:'animate',frames:2,fps:5},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
-    kanban:{folder:'depth',frames:2,scale:1.18},take:{folder:'depth',frames:2,scale:1.28},torii:{folder:'depth',frames:2,scale:1.28}
+    choochin:{folder:'animate',frames:2,fps:4},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},roopu:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},te_down:{folder:'animate',file:'te',frames:2,fps:5,flipY:true},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
+    kanban:{folder:'depth',frames:2,scale:1.18},take:{folder:'depth',frames:2,scale:1.28},torii:{folder:'depth',frames:2,scale:1.28},
+    rock:{kind:'procedural'},sakura_branch:{kind:'procedural'},nihon_ningyo:{kind:'procedural'},spirit:{kind:'procedural'}
   };
   const obstacleImages={};
-  Object.entries(obstacleAssets).forEach(([name,asset])=>{const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${name}.webp`;obstacleImages[name]=img});
+  Object.entries(obstacleAssets).forEach(([name,asset])=>{if(!asset.folder)return;const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${asset.file||name}.webp`;obstacleImages[name]=img});
   const backgroundImages={};
   function loadBackground(file){
     if(!file)return null;
@@ -271,7 +272,7 @@
   const correctAudio = new Map([...milestoneSounds.values(),...climaxSounds].map(src=>{
     const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
   }));
-  const state = {running:false,paused:false,tutorialActive:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
+  const state = {running:false,paused:false,tutorialActive:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
   const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
@@ -384,7 +385,17 @@
     const audio=correctAudio.get(src);if(!audio)return;
     audio.pause();audio.currentTime=0;audio.play().catch(()=>{});
   }
-  function question(){if(!state.running||state.paused||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=Math.random()<.5;let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus(tr().listen);ui.count.textContent='3';speak(audio);countdown(token,3)}
+  function refillMatchDeck(){
+    let deck,combined;
+    do{
+      deck=[true,true,true,true,false,false,false,false];
+      for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
+      combined=[...state.matchHistory.slice(-2),...deck];
+    }while(combined.some((value,index)=>index>=2&&value===combined[index-1]&&value===combined[index-2]));
+    state.matchDeck=deck;
+  }
+  function nextMatch(){if(!state.matchDeck.length)refillMatchDeck();const match=state.matchDeck.shift();state.matchHistory.push(match);state.matchHistory=state.matchHistory.slice(-2);return match}
+  function question(){if(!state.running||state.paused||state.hearts<=0)return;state.token++;const token=state.token;const audio=kanaSet[Math.floor(Math.random()*kanaSet.length)];const match=nextMatch();let shown=audio;while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;setStatus(tr().listen);ui.count.textContent='3';speak(audio);countdown(token,3)}
   function countdown(token,n){if(!state.running||token!==state.token)return;ui.count.textContent=n;if(n===0){state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token);return}later(()=>countdown(token,n-1),700)}
   function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+OBSTACLE_SPAWN_AHEAD,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=JUMP_VELOCITY;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
   function judge(token){
@@ -432,7 +443,7 @@
   }
   function giveUp(){if(!state.running)return;state.paused=false;ui.pauseMenu.classList.remove('active');endRun()}
 
-  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialWasSeen();Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=showTutorial;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialWasSeen();Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),matchDeck:[],matchHistory:[],last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=showTutorial;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
   function endRun(){if(!state.running)return;state.running=false;state.paused=false;state.tutorialActive=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);ui.pauseMenu.classList.remove('active');const text=tr(),resultBackground=stageBackgroundFile(stageIndex());ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
 
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
@@ -456,18 +467,35 @@
     ctx.fillStyle='#d65545';ctx.beginPath();ctx.moveTo(px-19,py-18);ctx.lineTo(px-10,py-39);ctx.lineTo(px-2,py-19);ctx.lineTo(px+8,py-39);ctx.lineTo(px+18,py-16);ctx.fill();
     ctx.fillStyle='#2d2634';ctx.beginPath();ctx.arc(px+9,py-4,3,0,Math.PI*2);ctx.fill();
   }
-  function drawObstacle(obstacle,ground,s,layer='back'){
-    const asset=obstacleAssets[obstacle.assetKey],img=obstacleImages[obstacle.assetKey];
-    if(asset&&img?.complete&&img.naturalWidth){
-      const isDepth=asset.folder==='depth';
-      if((isDepth&&layer!=='back'&&layer!=='front')||(!isDepth&&layer==='front'))return;
-      const frames=asset.frames||1,frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
-      const baseSize=isDepth?Math.max(158,Math.min(210,W*.47)):Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset.scale||1);
-      const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-AIR_OBSTACLE_HEIGHT-size*.5);
-      ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
-      ctx.drawImage(img,frame*384,0,384,384,obstacle.x-size*.5,drawY,size,size);ctx.restore();return;
+  function drawProceduralObstacle(name,x,y,size){
+    ctx.save();ctx.translate(x,y);ctx.lineWidth=Math.max(2,size*.025);ctx.lineJoin='round';
+    if(name==='rock'){
+      ctx.fillStyle='#625b66';ctx.strokeStyle='#302b35';ctx.beginPath();ctx.moveTo(-size*.38,size*.5);ctx.lineTo(-size*.3,size*.08);ctx.lineTo(-size*.08,-size*.2);ctx.lineTo(size*.25,-size*.08);ctx.lineTo(size*.4,size*.5);ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.strokeStyle='#8b8490';ctx.beginPath();ctx.moveTo(-size*.18,size*.17);ctx.lineTo(size*.02,-size*.02);ctx.lineTo(size*.2,size*.12);ctx.stroke();
+    }else if(name==='sakura_branch'){
+      ctx.strokeStyle='#563527';ctx.lineWidth=size*.09;ctx.beginPath();ctx.moveTo(-size*.48,size*.15);ctx.quadraticCurveTo(-size*.08,-size*.08,size*.48,-size*.22);ctx.stroke();
+      ctx.lineWidth=size*.035;for(let i=-3;i<=3;i++){const bx=i*size*.13,by=-size*(.08+i*.018);ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx-size*.05,by-size*.2);ctx.stroke()}
+      for(let i=-4;i<=4;i++){ctx.fillStyle=i%2?'#ffafc8':'#ffd5e2';ctx.beginPath();ctx.arc(i*size*.115,-size*(.22+(i%3)*.045),size*.055,0,Math.PI*2);ctx.fill()}
+    }else if(name==='nihon_ningyo'){
+      ctx.fillStyle='#16131b';ctx.beginPath();ctx.arc(0,-size*.22,size*.22,Math.PI,Math.PI*2);ctx.lineTo(size*.24,size*.13);ctx.lineTo(-size*.24,size*.13);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#f1d4bd';ctx.beginPath();ctx.arc(0,-size*.18,size*.14,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17131d';ctx.fillRect(-size*.085,-size*.2,size*.035,size*.028);ctx.fillRect(size*.05,-size*.2,size*.035,size*.028);
+      ctx.fillStyle='#a82b34';ctx.beginPath();ctx.moveTo(-size*.25,size*.48);ctx.lineTo(-size*.16,size*.02);ctx.lineTo(0,size*.12);ctx.lineTo(size*.16,size*.02);ctx.lineTo(size*.25,size*.48);ctx.closePath();ctx.fill();ctx.fillStyle='#f0b84b';ctx.fillRect(-size*.18,size*.18,size*.36,size*.07);
+    }else if(name==='spirit'){
+      ctx.globalAlpha=.78;ctx.fillStyle='#bff4ff';ctx.shadowColor='#67d9ff';ctx.shadowBlur=18;ctx.beginPath();ctx.arc(0,-size*.16,size*.25,Math.PI,0);ctx.lineTo(size*.24,size*.18);ctx.quadraticCurveTo(size*.13,size*.38,0,size*.2);ctx.quadraticCurveTo(-size*.13,size*.38,-size*.24,size*.18);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#304a65';ctx.beginPath();ctx.arc(-size*.08,-size*.15,size*.025,0,Math.PI*2);ctx.arc(size*.08,-size*.15,size*.025,0,Math.PI*2);ctx.fill();
     }
-    if(layer==='front')return;
+    ctx.restore();
+  }
+  function drawObstacle(obstacle,ground,s,layer='back'){
+    const asset=obstacleAssets[obstacle.assetKey],img=obstacleImages[obstacle.assetKey],isDepth=asset?.folder==='depth';
+    if((isDepth&&layer!=='back'&&layer!=='front')||(!isDepth&&layer==='front'))return;
+    const baseSize=isDepth?Math.max(158,Math.min(210,W*.47)):Math.max(82,Math.min(obstacle.type==='jump'?118:128,W*.31)),size=baseSize*(asset?.scale||1);
+    const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-AIR_OBSTACLE_HEIGHT-size*.5);
+    if(asset?.kind==='procedural'){drawProceduralObstacle(obstacle.assetKey,obstacle.x,drawY+size*.5,size);return}
+    if(asset&&img?.complete&&img.naturalWidth){
+      const frames=asset.frames||1,frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
+      ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;ctx.translate(obstacle.x,drawY+size*.5);if(asset.flipY)ctx.scale(1,-1);
+      ctx.drawImage(img,frame*384,0,384,384,-size*.5,-size*.5,size,size);ctx.restore();return;
+    }
     if(obstacle.type==='jump'){
       ctx.fillStyle='#514454';ctx.beginPath();ctx.moveTo(obstacle.x-30,ground);ctx.lineTo(obstacle.x-19,ground-39);ctx.lineTo(obstacle.x+4,ground-55);ctx.lineTo(obstacle.x+31,ground);ctx.fill();ctx.strokeStyle=s.accent;ctx.lineWidth=4;ctx.stroke();
     }else{
