@@ -62,7 +62,7 @@
     .language-panel{position:absolute;z-index:3;top:max(14px,env(safe-area-inset-top));left:12px;right:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;max-width:460px;margin:auto}.language-choice{height:38px;padding:0 3px;border:2px solid #fff4cd;border-radius:0;background:#171526;color:#c7bdd4;box-shadow:3px 3px 0 #080711;font-size:12px;cursor:pointer}.language-choice.active{background:#ffc94a;color:#241a35;border-color:#fff}.language-choice:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #080711}
     .title .title-card{max-width:370px;padding:24px 20px 20px}.title-rule{min-height:38px;margin:9px 0 14px;color:#fff4cd;font-size:15px;line-height:1.4}.title-control{margin-top:13px;color:#aaa0bd;font-size:11px;letter-spacing:.1em}
     .question-layout{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}.kana-panel{position:relative;display:grid;place-items:center;min-height:108px;border:4px solid #fff4cd;background:#171526;box-shadow:5px 5px 0 #090711}.kana-panel .replay{position:absolute;right:7px;bottom:7px}.question-layout .jump{justify-self:center;width:108px;height:108px;min-height:0;margin:0;border-radius:50%;font-size:13px;line-height:1.25}
-    .tutorial{position:absolute;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(10,8,18,.78)}.tutorial.active{display:flex}.tutorial-panel{width:100%;max-width:390px;padding:26px 20px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center}.tutorial-panel h2{margin:0 0 20px;color:#ffc94a;font-size:22px}.tutorial-rule{display:grid;gap:10px;margin-bottom:22px}.tutorial-rule p{margin:0;padding:12px;border:2px solid #5c4b71;background:#27203a;font-size:15px}.tutorial-rule b{color:#ffc94a}
+    .tutorial{position:absolute;inset:0;z-index:90;display:none;padding:18px;background:rgba(10,8,18,.76);pointer-events:none}.tutorial.active{display:block}.tutorial-panel{position:absolute;z-index:96;top:18%;left:50%;width:calc(100% - 36px);max-width:390px;transform:translateX(-50%);padding:16px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center;pointer-events:auto}.tutorial-panel.point-up{top:auto;bottom:145px}.tutorial-panel::after{content:"";position:absolute;left:50%;bottom:-18px;width:24px;height:24px;transform:translateX(-50%) rotate(45deg);border-right:4px solid #fff4cd;border-bottom:4px solid #fff4cd;background:#171526}.tutorial-panel.point-up::after{top:-18px;bottom:auto;border:0;border-left:4px solid #fff4cd;border-top:4px solid #fff4cd}.tutorial-panel h2{margin:7px 0 9px;color:#ffc94a;font-size:20px}.tutorial-panel p{min-height:48px;margin:0 0 12px;font-size:14px;line-height:1.55}.tutorial-languages{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.tutorial-language{height:30px;padding:0 2px;border:2px solid #5c4b71;background:#27203a;color:#c7bdd4;font-size:11px;cursor:pointer}.tutorial-language.active{border-color:#fff4cd;background:#ffc94a;color:#241a35}.tutorial-progress{margin-top:8px;color:#aaa0bd;font-size:11px}.tutorial-actions{display:grid;grid-template-columns:1fr 2fr;gap:8px}.tutorial-actions button{min-height:44px}.tutorial-actions .secondary{margin-top:0}.tutorial-focus{position:relative!important;z-index:94!important;box-shadow:0 0 0 5px #ffc94a,0 0 0 10px rgba(255,244,205,.75),0 0 28px #ffc94a!important}.tutorial-focus.pause-button{position:absolute!important}
     .handedness-wrap{position:relative;margin:0 0 13px}.handedness{display:grid;grid-template-columns:1fr 1fr 32px;gap:6px;margin:0 auto;max-width:290px}.hand-choice,.hand-help-button{min-height:34px;border:2px solid #5c4b71;background:#27203a;color:#c7bdd4;box-shadow:2px 2px 0 #080711;font-size:12px;font-weight:900;cursor:pointer}.hand-choice.active{border-color:#fff4cd;background:#ffc94a;color:#241a35}.hand-help-button{border-color:#fff4cd;color:#fff4cd;font-size:17px}.hand-help{display:none;margin:9px auto 0;max-width:300px;padding:9px 10px;border:2px solid #fff4cd;background:#27203a;color:#fff;font-size:12px;line-height:1.45}.hand-help.active{display:block}.left-handed .question-layout .jump{order:1}.left-handed .question-layout .kana-panel{order:2}
     .pause-menu{position:absolute;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(10,8,18,.82)}.pause-menu.active{display:flex}.pause-panel{width:100%;max-width:360px;padding:24px 20px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center}.pause-panel h2{margin:0 0 18px;color:#ffc94a}.pause-panel .secondary{color:#171526}.danger{width:100%;min-height:54px;margin-top:12px;border:3px solid #ffd0bd;background:#a9262a;color:#fff;font-weight:900;box-shadow:4px 4px 0 #080711;cursor:pointer}
     @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.kana-panel{min-height:88px}.question-layout .jump{width:88px;height:88px}.kana{font-size:44px}.status{top:96px}}
@@ -116,7 +116,7 @@
     </div>
     <div class="question">
       <div class="question-layout">
-        <div class="kana-panel">
+        <div id="kanaPanel" class="kana-panel">
           <div id="kana" class="kana">—</div>
           <button id="replayBtn" class="replay" disabled aria-label="Replay sound">↻</button>
         </div>
@@ -125,18 +125,23 @@
     </div>
     <div id="tutorial" class="tutorial" role="dialog" aria-modal="true">
       <div class="tutorial-panel">
-        <h2 id="tutorialTitle">HOW TO PLAY</h2>
-        <div class="tutorial-rule">
-          <p id="tutorialMatch"><b>MATCH</b> → JUMP</p>
-          <p id="tutorialDifferent"><b>DIFFERENT</b> → STAY</p>
+        <div class="tutorial-languages" aria-label="Tutorial language">
+          <button class="tutorial-language" data-language="en" type="button">EN</button><button class="tutorial-language" data-language="ja" type="button">日本語</button><button class="tutorial-language" data-language="es" type="button">ES</button><button class="tutorial-language" data-language="zh" type="button">中文</button><button class="tutorial-language" data-language="ko" type="button">한국어</button>
         </div>
-        <button id="tutorialStart" class="primary">GOT IT!</button>
+        <h2 id="tutorialTitle">HOW TO PLAY</h2>
+        <p id="tutorialBody">Listen to the sound and check the hiragana shown here.</p>
+        <div id="tutorialProgress" class="tutorial-progress">1 / 3</div>
+        <div class="tutorial-actions">
+          <button id="tutorialBack" class="secondary" type="button">BACK</button>
+          <button id="tutorialNext" class="primary" type="button">NEXT</button>
+        </div>
       </div>
     </div>
     <div id="pauseMenu" class="pause-menu" role="dialog" aria-modal="true">
       <div class="pause-panel">
         <h2 id="pauseTitle">PAUSED</h2>
         <button id="resumeBtn" class="primary" type="button">RESUME</button>
+        <button id="pauseTutorialBtn" class="secondary" type="button">HOW TO PLAY</button>
         <button id="pauseTitleBtn" class="secondary" type="button">BACK TO TITLE</button>
         <button id="giveUpBtn" class="danger" type="button">GIVE UP</button>
       </div>
@@ -180,6 +185,13 @@
     zh:{right:'跳跃：右侧',left:'跳跃：左侧',help:'选择游戏画面中跳跃按钮显示在哪一侧。'},
     ko:{right:'점프: 오른쪽',left:'점프: 왼쪽',help:'게임 화면에서 점프 버튼을 놓을 쪽을 선택합니다.'}
   };
+  const tourUi={
+    en:{menu:'HOW TO PLAY',back:'BACK',next:'NEXT',done:'START',steps:[['HIRAGANA AREA','Listen to the sound and check the hiragana shown here.'],['JUMP BUTTON','If the sound matches the hiragana, tap JUMP. If they are different, do not tap it.'],['PAUSE BUTTON','Pause here to review this tutorial, return to the title, or give up.']]},
+    ja:{menu:'遊び方を見る',back:'戻る',next:'次へ',done:'スタート',steps:[['ひらがなエリア','音声を聞いて、ここに表示されるひらがなを確認します。'],['ジャンプボタン','音声とひらがなが同じならジャンプ。違うときは押さずに、そのまま走ります。'],['一時停止ボタン','ゲームを止めたいときに押します。遊び方の再確認、タイトルへ戻る、あきらめる操作もここからできます。']]},
+    es:{menu:'CÓMO JUGAR',back:'ATRÁS',next:'SIGUIENTE',done:'EMPEZAR',steps:[['ÁREA DE HIRAGANA','Escucha el sonido y mira el hiragana que aparece aquí.'],['BOTÓN DE SALTO','Si el sonido coincide con el hiragana, pulsa SALTO. Si es diferente, no lo pulses.'],['BOTÓN DE PAUSA','Pausa el juego para revisar este tutorial, volver al título o rendirte.']]},
+    zh:{menu:'查看玩法',back:'返回',next:'下一步',done:'开始',steps:[['平假名区域','听声音，并确认这里显示的平假名。'],['跳跃按钮','声音与平假名相同时点击跳跃；不同时不要点击。'],['暂停按钮','可随时暂停游戏、重新查看教程、返回标题或放弃。']]},
+    ko:{menu:'게임 방법',back:'이전',next:'다음',done:'시작',steps:[['히라가나 영역','소리를 듣고 여기에 표시되는 히라가나를 확인합니다.'],['점프 버튼','소리와 히라가나가 같으면 점프를 누르고, 다르면 누르지 않습니다.'],['일시정지 버튼','게임을 멈추고 튜토리얼 확인, 타이틀 이동, 포기를 선택할 수 있습니다.']]}
+  };
   const languageCodes={en:'en',ja:'ja',es:'es',zh:'zh-CN',ko:'ko'};
   let titleLanguage='en';
   try{titleLanguage=localStorage.getItem('amaterasu-language-v2')||'en'}catch(_){}
@@ -194,12 +206,14 @@
   function applyTitleLanguage(language){
     titleLanguage=locales[language]?language:'en';const text=locales[titleLanguage];
     $('titleRule').textContent=text.rule;$('startBtn').textContent=text.start;$('titleControl').textContent=text.control;
-    $('tutorialTitle').textContent=text.tutorialTitle;$('tutorialMatch').innerHTML=text.tutorialMatch;$('tutorialDifferent').innerHTML=text.tutorialDifferent;$('tutorialStart').textContent=text.tutorialStart;
+    $('pauseTutorialBtn').textContent=tourUi[titleLanguage].menu;
     const handText=handUi[titleLanguage];$('rightHandBtn').textContent=handText.right;$('leftHandBtn').textContent=handText.left;$('handHelp').textContent=handText.help;$('pauseTitle').textContent=text.pause;$('resumeBtn').textContent=text.resume;$('pauseTitleBtn').textContent=text.pauseTitle;$('giveUpBtn').textContent=text.giveUp;
     $('resultEyebrow').textContent=text.result;$('resultTitle').textContent=text.runResult;$('scoreLabel').textContent=text.score;$('distanceLabel').textContent=text.distance;$('maxComboLabel').textContent=text.maxCombo;$('accuracyLabel').textContent=text.accuracy;$('practicedLabel').textContent=text.practiced;$('retryBtn').textContent=text.retry;$('titleBtn').textContent=text.title;
     ui.canvas.setAttribute('aria-label',text.runResult);ui.mute.setAttribute('aria-label','Sound');ui.replay.setAttribute('aria-label',text.listen);
     ui.title.lang=languageCodes[titleLanguage];
     document.querySelectorAll('.language-choice').forEach(button=>{const active=button.dataset.language===titleLanguage;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+    document.querySelectorAll('.tutorial-language').forEach(button=>{const active=button.dataset.language===titleLanguage;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+    if($('tutorial').classList.contains('active'))renderTutorialStep();
     try{localStorage.setItem('amaterasu-language-v2',titleLanguage)}catch(_){}
   }
   applyHandedness(leftHanded);
@@ -429,14 +443,33 @@
   function burst(x,y,color){for(let i=0;i<28;i++)state.particles.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.7)*260,life:1,color})}
   function toggleReady(){if(state.running&&!state.paused&&state.accepting)setReady(!state.jumpReady)}
 
-  let tutorialShownThisSession=false;
-  function openTutorial(){state.tutorialActive=true;ui.pause.disabled=true;state.phase='idle';state.phaseT=0;state.scroll=0;state.distance=0;state.playerY=0;state.playerV=0;state.wasAirborne=false;state.characterAnim=null;$('tutorial').classList.add('active');$('tutorialStart').focus()}
+  let tutorialShownThisSession=false,tutorialStep=0,tutorialFromPause=false;
+  const tutorialTargets=['kanaPanel','jumpBtn','pauseBtn'];
+  function renderTutorialStep(){
+    const copy=tourUi[titleLanguage],step=copy.steps[tutorialStep];
+    tutorialTargets.forEach(id=>$(id).classList.remove('tutorial-focus'));
+    $(tutorialTargets[tutorialStep]).classList.add('tutorial-focus');
+    $('tutorialTitle').textContent=step[0];$('tutorialBody').textContent=step[1];
+    $('tutorialProgress').textContent=`${tutorialStep+1} / ${copy.steps.length}`;
+    $('tutorialBack').textContent=copy.back;$('tutorialBack').disabled=tutorialStep===0;
+    $('tutorialNext').textContent=tutorialStep===copy.steps.length-1?copy.done:copy.next;
+    document.querySelector('.tutorial-panel').classList.toggle('point-up',tutorialStep===2);
+    document.querySelectorAll('.tutorial-language').forEach(button=>{const active=button.dataset.language===titleLanguage;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+  }
+  function openTutorial(fromPause=false){
+    tutorialFromPause=fromPause;tutorialStep=0;state.tutorialActive=true;ui.pause.disabled=true;ui.pauseMenu.classList.remove('active');
+    if(!fromPause){state.phase='idle';state.phaseT=0;state.scroll=0;state.distance=0;state.playerY=0;state.playerV=0;state.wasAirborne=false;state.characterAnim=null}
+    ui.kana.textContent='あ';$('tutorial').classList.add('active');renderTutorialStep();$('tutorialNext').focus();
+  }
   function closeTutorial(){
-    $('tutorial').classList.remove('active');
+    $('tutorial').classList.remove('active');tutorialTargets.forEach(id=>$(id).classList.remove('tutorial-focus'));
     state.tutorialActive=false;ui.pause.disabled=false;state.last=performance.now();
     tutorialShownThisSession=true;
-    if(state.running)later(question,350);
+    if(tutorialFromPause){tutorialFromPause=false;ui.pauseMenu.classList.add('active');$('resumeBtn').focus()}
+    else if(state.running){ui.kana.textContent='—';later(question,350)}
   }
+  function nextTutorialStep(){if(tutorialStep<tourUi[titleLanguage].steps.length-1){tutorialStep++;renderTutorialStep()}else closeTutorial()}
+  function previousTutorialStep(){if(tutorialStep>0){tutorialStep--;renderTutorialStep()}}
 
   function openPause(){
     if(!state.running||state.paused||state.tutorialActive)return;
@@ -602,10 +635,11 @@
   }
 
   document.querySelectorAll('.language-choice').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
+  document.querySelectorAll('.tutorial-language').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
   $('rightHandBtn').addEventListener('click',()=>applyHandedness(false));$('leftHandBtn').addEventListener('click',()=>applyHandedness(true));
   $('handHelpBtn').addEventListener('click',()=>{const open=$('handHelp').classList.toggle('active');$('handHelpBtn').setAttribute('aria-expanded',String(open))});
-  $('tutorialStart').addEventListener('click',closeTutorial);
-  ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
+  $('tutorialBack').addEventListener('click',previousTutorialStep);$('tutorialNext').addEventListener('click',nextTutorialStep);
+  ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTutorialBtn').addEventListener('click',()=>openTutorial(true));$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
   $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
 })();
 </script>
