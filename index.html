@@ -466,7 +466,10 @@
     let sx=0,sy=0,sw=img.naturalWidth,sh=img.naturalHeight;
     if(sourceRatio>targetRatio){
       sw=img.naturalHeight*targetRatio;
-      sx=(img.naturalWidth-sw)*progress;
+      // The horror sequence is authored around the doll approaching the center.
+      // Keep that composition locked instead of panning past it near the finale.
+      const horizontalFocus=stages[index].horror ? 0.5 : progress;
+      sx=(img.naturalWidth-sw)*horizontalFocus;
     }else{
       sh=img.naturalWidth/targetRatio;
       sy=(img.naturalHeight-sh)*.5;
