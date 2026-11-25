@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#17131e">
   <title>AMATERASU LEARNING RUNNER</title>
   <style>
+    @font-face{font-family:"BR Wakaisho";src:url('asset/fonts/BRWakaisho-Medium-kana.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap}
     :root{--paper:#fffaf0;--ink:#29222f;--red:#df4e46;--gold:#f3b63f;--green:#2f9b72;--glass:rgba(29,23,39,.76)}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#17131e;color:var(--ink);font-family:"Hiragino Sans","Yu Gothic",system-ui,sans-serif}
@@ -55,7 +56,7 @@
     .count{font-family:"Courier New",monospace;color:#fff4cd;text-shadow:5px 0 #d4483d,-5px 0 #34769a,0 6px #171526;font-size:88px}
     .mute{border:3px solid #fff4cd;border-radius:0;background:#171526;color:#fff;box-shadow:3px 3px 0 #080711}
     .question{border-top:5px solid #090711;background:#27203a;box-shadow:none}
-    .question-card{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:5px 5px 0 #090711;color:#fff;overflow:visible}.kana{font-family:"MS Gothic","Yu Gothic",monospace;color:#fff4cd;text-shadow:3px 3px 0 #a53b36}.instruction{border-left:3px solid #5c4b71}.instruction b{color:#ffc94a;font-size:14px}.instruction span{color:#ddd2ea;font-size:12px}.replay{border:3px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;box-shadow:3px 3px 0 #080711}
+    .question-card{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:5px 5px 0 #090711;color:#fff;overflow:visible}.kana{font-family:"BR Wakaisho","Yu Mincho",serif;font-weight:500;color:#fff4cd;text-shadow:3px 3px 0 #a53b36}.instruction{border-left:3px solid #5c4b71}.instruction b{color:#ffc94a;font-size:14px}.instruction span{color:#ddd2ea;font-size:12px}.replay{border:3px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;box-shadow:3px 3px 0 #080711}
     .jump{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:0 0 0 3px #090711,6px 6px 0 #090711;color:#fff4cd;font-size:15px;transition:none}.jump.ready{background:#ffc94a;box-shadow:0 0 0 3px #8f4028,6px 6px 0 #090711;color:#251828;transform:none}.jump:active{transform:translate(4px,4px);box-shadow:0 0 0 3px #090711,2px 2px 0 #090711}
     .result{background-image:linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),repeating-linear-gradient(135deg,#241a35 0 12px,#382342 12px 24px);background-size:cover;background-position:center}.result-card{background:#171526ed}
     .stats{gap:8px}.stat{border:3px solid #fff4cd;border-radius:0;background:#2d2540;color:#fff;box-shadow:3px 3px 0 #080711}.stat small{color:#ffc94a;font-size:10px}.stat strong{font-family:"Courier New",monospace}.learned h3{font-size:13px}.kana-tag{border:2px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;font-family:"MS Gothic",monospace}.tip{border:3px solid #a06c35;border-radius:0;background:#fff0b5;color:#50351f;font-size:12px}
