@@ -39,7 +39,7 @@
     .app{border-left:4px solid #07060d;border-right:4px solid #07060d;box-shadow:12px 0 0 #0008,-12px 0 0 #0008}
     .app::after{content:"";position:absolute;inset:0;z-index:100;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(8,5,18,.09) 3px 4px);mix-blend-mode:multiply}
     .title{background-image:linear-gradient(rgba(15,12,28,.3),rgba(15,12,28,.54)),url('asset/background/1.png');background-size:cover;background-position:center;image-rendering:pixelated}
-    .title .sun{display:none}.title .title-card{z-index:2;background:#171526ed}.title-runner{position:absolute;z-index:1;left:-150px;bottom:max(2px,env(safe-area-inset-bottom));width:140px;height:140px;image-rendering:pixelated;pointer-events:none;animation:titleRunnerCross 6.5s linear infinite}@keyframes titleRunnerCross{to{transform:translateX(700px)}}
+    .title .sun{display:none}.title .title-card{z-index:2;top:-24px;background:rgba(23,21,38,.7)}.title-runner{position:absolute;z-index:1;left:-150px;bottom:max(2px,env(safe-area-inset-bottom));width:140px;height:140px;image-rendering:pixelated;pointer-events:none;animation:titleRunnerCross 6.5s linear infinite}@keyframes titleRunnerCross{to{transform:translateX(700px)}}
     .sun{top:7%;width:176px;height:176px;border-radius:0;clip-path:polygon(25% 0,75% 0,75% 6%,88% 6%,88% 13%,94% 13%,94% 25%,100% 25%,100% 75%,94% 75%,94% 88%,88% 88%,88% 94%,75% 94%,75% 100%,25% 100%,25% 94%,13% 94%,13% 88%,6% 88%,6% 75%,0 75%,0 25%,6% 25%,6% 13%,13% 13%,13% 6%,25% 6%);background:#ffe46b;box-shadow:none}
     .title-card,.result-card{border:4px solid var(--pixel-light);border-radius:0;background:var(--pixel-dark);box-shadow:0 0 0 4px #080711,10px 10px 0 #080711;color:var(--pixel-light)}
     .title-card::before,.result-card::before{content:"";position:absolute;inset:7px;border:2px solid #5c4b71;pointer-events:none}
@@ -58,15 +58,15 @@
     .question{border-top:5px solid #090711;background:#27203a;box-shadow:none}
     .question-card{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:5px 5px 0 #090711;color:#fff;overflow:visible}.kana{font-family:"BR Wakaisho","Yu Mincho",serif;font-weight:500;color:#fff4cd;text-shadow:3px 3px 0 #a53b36}.instruction{border-left:3px solid #5c4b71}.instruction b{color:#ffc94a;font-size:14px}.instruction span{color:#ddd2ea;font-size:12px}.replay{border:3px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;box-shadow:3px 3px 0 #080711}
     .jump{border:4px solid #fff4cd;border-radius:0;background:#171526;box-shadow:0 0 0 3px #090711,6px 6px 0 #090711;color:#fff4cd;font-size:15px;transition:none}.jump.ready{background:#ffc94a;box-shadow:0 0 0 3px #8f4028,6px 6px 0 #090711;color:#251828;transform:none}.jump:active{transform:translate(4px,4px);box-shadow:0 0 0 3px #090711,2px 2px 0 #090711}
-    .result{background-image:linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),repeating-linear-gradient(135deg,#241a35 0 12px,#382342 12px 24px);background-size:cover;background-position:center}.result-card{background:#171526ed}
+    .result{background-image:linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),repeating-linear-gradient(135deg,#241a35 0 12px,#382342 12px 24px);background-size:cover;background-position:center}.result-card{background:rgba(23,21,38,.7)}
     .stats{gap:8px}.stat{border:3px solid #fff4cd;border-radius:0;background:#2d2540;color:#fff;box-shadow:3px 3px 0 #080711}.stat small{color:#ffc94a;font-size:10px}.stat strong{font-family:"Courier New",monospace}.learned h3{font-size:13px}.kana-tag{border:2px solid #fff4cd;border-radius:0;background:#3a3150;color:#fff;font-family:"MS Gothic",monospace}.tip{border:3px solid #a06c35;border-radius:0;background:#fff0b5;color:#50351f;font-size:12px}
     .language-panel{position:absolute;z-index:3;top:max(14px,env(safe-area-inset-top));left:12px;right:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:5px;max-width:460px;margin:auto}.language-choice{height:38px;padding:0 3px;border:2px solid #fff4cd;border-radius:0;background:#171526;color:#c7bdd4;box-shadow:3px 3px 0 #080711;font-size:12px;cursor:pointer}.language-choice.active{background:#ffc94a;color:#241a35;border-color:#fff}.language-choice:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #080711}
     .title .title-card{max-width:370px;padding:24px 20px 20px}.title-rule{min-height:38px;margin:9px 0 14px;color:#fff4cd;font-size:15px;line-height:1.4}.title-control{margin-top:13px;color:#aaa0bd;font-size:11px;letter-spacing:.1em}
     .question-layout{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}.kana-panel{position:relative;display:grid;place-items:center;min-height:108px;border:4px solid #fff4cd;background:#171526;box-shadow:5px 5px 0 #090711}.kana-panel .replay{position:absolute;right:7px;bottom:7px}.question-layout .jump{justify-self:center;width:108px;height:108px;min-height:0;margin:0;border-radius:50%;font-size:13px;line-height:1.25}
     .tutorial{position:absolute;inset:0;z-index:90;display:none;padding:18px;background:rgba(10,8,18,.76);pointer-events:none}.tutorial.active{display:block}.tutorial-panel{position:absolute;z-index:96;top:18%;left:50%;width:calc(100% - 36px);max-width:390px;transform:translateX(-50%);padding:16px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center;pointer-events:auto}.tutorial-panel.point-up{top:auto;bottom:145px}.tutorial-panel::after{content:"";position:absolute;left:50%;bottom:-18px;width:24px;height:24px;transform:translateX(-50%) rotate(45deg);border-right:4px solid #fff4cd;border-bottom:4px solid #fff4cd;background:#171526}.tutorial-panel.point-up::after{top:-18px;bottom:auto;border:0;border-left:4px solid #fff4cd;border-top:4px solid #fff4cd}.tutorial-panel h2{margin:7px 0 9px;color:#ffc94a;font-size:20px}.tutorial-panel p{min-height:48px;margin:0 0 12px;font-size:14px;line-height:1.55}.tutorial-languages{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.tutorial-language{height:30px;padding:0 2px;border:2px solid #5c4b71;background:#27203a;color:#c7bdd4;font-size:11px;cursor:pointer}.tutorial-language.active{border-color:#fff4cd;background:#ffc94a;color:#241a35}.tutorial-progress{margin-top:8px;color:#aaa0bd;font-size:11px}.tutorial-actions{display:grid;grid-template-columns:1fr 2fr;gap:8px}.tutorial-actions button{min-height:44px}.tutorial-actions .secondary{margin-top:0}.tutorial-focus{position:relative!important;z-index:94!important;box-shadow:0 0 0 5px #ffc94a,0 0 0 10px rgba(255,244,205,.75),0 0 28px #ffc94a!important}.tutorial-focus.pause-button{position:absolute!important}
     .handedness-wrap{position:relative;margin:0 0 13px}.handedness{display:grid;grid-template-columns:1fr 1fr 32px;gap:6px;margin:0 auto;max-width:290px}.hand-choice,.hand-help-button{min-height:34px;border:2px solid #5c4b71;background:#27203a;color:#c7bdd4;box-shadow:2px 2px 0 #080711;font-size:12px;font-weight:900;cursor:pointer}.hand-choice.active{border-color:#fff4cd;background:#ffc94a;color:#241a35}.hand-help-button{border-color:#fff4cd;color:#fff4cd;font-size:17px}.hand-help{display:none;margin:9px auto 0;max-width:300px;padding:9px 10px;border:2px solid #fff4cd;background:#27203a;color:#fff;font-size:12px;line-height:1.45}.hand-help.active{display:block}.left-handed .question-layout .jump{order:1}.left-handed .question-layout .kana-panel{order:2}
-    .pause-menu{position:absolute;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(10,8,18,.82)}.pause-menu.active{display:flex}.pause-panel{width:100%;max-width:360px;padding:24px 20px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center}.pause-panel h2{margin:0 0 18px;color:#ffc94a}.pause-panel .secondary{color:#171526}.danger{width:100%;min-height:54px;margin-top:12px;border:3px solid #ffd0bd;background:#a9262a;color:#fff;font-weight:900;box-shadow:4px 4px 0 #080711;cursor:pointer}
-    @media(max-height:670px){.title-card{padding:18px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.kana-panel{min-height:88px}.question-layout .jump{width:88px;height:88px}.kana{font-size:44px}.status{top:96px}}
+    .pause-menu{position:absolute;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(10,8,18,.82)}.pause-menu.active{display:flex}.pause-panel{width:100%;max-width:360px;padding:24px 20px;border:4px solid #fff4cd;background:#171526;box-shadow:8px 8px 0 #080711;color:#fff;text-align:center}.pause-panel h2{margin:0 0 14px;color:#ffc94a}.pause-panel .secondary{color:#171526}.pause-hand-label{margin:0 0 7px;color:#c7bdd4;font-size:12px}.pause-handedness{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:15px}.pause-hand-choice{min-height:38px;border:3px solid #5c4b71;background:#27203a;color:#c7bdd4;box-shadow:3px 3px 0 #080711;font-size:12px;font-weight:900;cursor:pointer}.pause-hand-choice.active{border-color:#fff4cd;background:#ffc94a;color:#241a35}.danger{width:100%;min-height:54px;margin-top:12px;border:3px solid #ffd0bd;background:#a9262a;color:#fff;font-weight:900;box-shadow:4px 4px 0 #080711;cursor:pointer}
+    @media(max-height:670px){.title-card{padding:18px}.title .title-card{top:-12px}.crest{font-size:34px}.title-copy{margin-bottom:12px}.kana-panel{min-height:88px}.question-layout .jump{width:88px;height:88px}.kana{font-size:44px}.status{top:96px}}
   </style>
 </head>
 <body>
@@ -141,6 +141,11 @@
     <div id="pauseMenu" class="pause-menu" role="dialog" aria-modal="true">
       <div class="pause-panel">
         <h2 id="pauseTitle">PAUSED</h2>
+        <p id="pauseHandLabel" class="pause-hand-label">JUMP BUTTON SIDE</p>
+        <div class="pause-handedness" role="group" aria-label="Jump button side">
+          <button id="pauseRightHandBtn" class="pause-hand-choice active" type="button">JUMP: RIGHT</button>
+          <button id="pauseLeftHandBtn" class="pause-hand-choice" type="button">JUMP: LEFT</button>
+        </div>
         <button id="resumeBtn" class="primary" type="button">RESUME</button>
         <button id="pauseTutorialBtn" class="secondary" type="button">HOW TO PLAY</button>
         <button id="pauseTitleBtn" class="secondary" type="button">BACK TO TITLE</button>
@@ -180,11 +185,11 @@
     ko:{rule:'소리와 가나가 같으면 점프',start:'시작',control:'탭 / 스페이스',combo:'콤보',dist:'거리',stage:'스테이지',listen:'소리를 듣고 판단!',ready:'준비…',instruction:'소리 = 가나?',instructionBody:'같음: 점프<br>다름: 그대로',tutorialTitle:'게임 방법',tutorialMatch:'<b>소리와 글자가 같음</b> → 점프',tutorialDifferent:'<b>소리와 글자가 다름</b> → 그대로',tutorialStart:'알겠어요!',jump:'점프 준비',jumpReady:'✓ 준비 완료 / 탭으로 취소',match:'일치! 점프!',different:'불일치! 그대로!',correct:'정답!',power:'파워 업!',miss:'실수! 파워 다운',newStage:'새로운 스테이지',result:'학습 결과',runResult:'여정 기록',score:'점수',distance:'거리',maxCombo:'최대 콤보',accuracy:'정답률',practiced:'연습한 가나',retry:'다시 달리기',title:'타이틀로',rightHand:'오른손',leftHand:'왼손',pause:'일시정지',resume:'계속하기',pauseTitle:'타이틀로',giveUp:'포기하기',answers:n=>`(총 ${n}문제)`,tip:n=>`${n}문제 정답. 실수하면 콤보는 초기화되지만 거리는 유지됩니다.`,messages:['한 음씩 익히고 다시 달려요!','아마테라스의 힘이 깨어났습니다!','빛나는 질주였습니다!'],stages:['신사','벚꽃길','호쿠사이의 파도','후지산','시골 공포','교토','요미의 나라','선인의 마을']}
   };
   const handUi={
-    en:{right:'JUMP: RIGHT',left:'JUMP: LEFT',help:'Choose which side of the game screen has the JUMP button.'},
-    ja:{right:'JUMP：右',left:'JUMP：左',help:'ゲーム画面でジャンプボタンを置く側を選びます。利き手に合わせて選んでください。'},
-    es:{right:'SALTO: DER.',left:'SALTO: IZQ.',help:'Elige en qué lado de la pantalla aparece el botón de salto.'},
-    zh:{right:'跳跃：右侧',left:'跳跃：左侧',help:'选择游戏画面中跳跃按钮显示在哪一侧。'},
-    ko:{right:'점프: 오른쪽',left:'점프: 왼쪽',help:'게임 화면에서 점프 버튼을 놓을 쪽을 선택합니다.'}
+    en:{label:'JUMP BUTTON SIDE',right:'JUMP: RIGHT',left:'JUMP: LEFT',help:'Choose which side of the game screen has the JUMP button.'},
+    ja:{label:'ジャンプボタンの位置',right:'JUMP：右',left:'JUMP：左',help:'ゲーム画面でジャンプボタンを置く側を選びます。利き手に合わせて選んでください。'},
+    es:{label:'LADO DEL BOTÓN DE SALTO',right:'SALTO: DER.',left:'SALTO: IZQ.',help:'Elige en qué lado de la pantalla aparece el botón de salto.'},
+    zh:{label:'跳跃按钮位置',right:'跳跃：右侧',left:'跳跃：左侧',help:'选择游戏画面中跳跃按钮显示在哪一侧。'},
+    ko:{label:'점프 버튼 위치',right:'점프: 오른쪽',left:'점프: 왼쪽',help:'게임 화면에서 점프 버튼을 놓을 쪽을 선택합니다.'}
   };
   const tourUi={
     en:{menu:'HOW TO PLAY',back:'BACK',next:'NEXT',done:'START',steps:[['HIRAGANA AREA','Listen to the sound and check the hiragana shown here.'],['JUMP BUTTON','If the sound matches the hiragana, tap JUMP. If they are different, do not tap it.'],['PAUSE BUTTON','Pause here to review this tutorial, return to the title, or give up.']]},
@@ -202,13 +207,15 @@
     leftHanded=Boolean(value);document.querySelector('.app').classList.toggle('left-handed',leftHanded);
     $('rightHandBtn').classList.toggle('active',!leftHanded);$('leftHandBtn').classList.toggle('active',leftHanded);
     $('rightHandBtn').setAttribute('aria-pressed',String(!leftHanded));$('leftHandBtn').setAttribute('aria-pressed',String(leftHanded));
+    $('pauseRightHandBtn').classList.toggle('active',!leftHanded);$('pauseLeftHandBtn').classList.toggle('active',leftHanded);
+    $('pauseRightHandBtn').setAttribute('aria-pressed',String(!leftHanded));$('pauseLeftHandBtn').setAttribute('aria-pressed',String(leftHanded));
     try{localStorage.setItem('amaterasu-left-handed-v1',leftHanded?'yes':'no')}catch(_){}
   }
   function applyTitleLanguage(language){
     titleLanguage=locales[language]?language:'en';const text=locales[titleLanguage];
     $('titleRule').textContent=text.rule;$('startBtn').textContent=text.start;$('titleControl').textContent=text.control;
     $('pauseTutorialBtn').textContent=tourUi[titleLanguage].menu;
-    const handText=handUi[titleLanguage];$('rightHandBtn').textContent=handText.right;$('leftHandBtn').textContent=handText.left;$('handHelp').textContent=handText.help;$('pauseTitle').textContent=text.pause;$('resumeBtn').textContent=text.resume;$('pauseTitleBtn').textContent=text.pauseTitle;$('giveUpBtn').textContent=text.giveUp;
+    const handText=handUi[titleLanguage];$('rightHandBtn').textContent=handText.right;$('leftHandBtn').textContent=handText.left;$('handHelp').textContent=handText.help;$('pauseHandLabel').textContent=handText.label;$('pauseRightHandBtn').textContent=handText.right;$('pauseLeftHandBtn').textContent=handText.left;$('pauseTitle').textContent=text.pause;$('resumeBtn').textContent=text.resume;$('pauseTitleBtn').textContent=text.pauseTitle;$('giveUpBtn').textContent=text.giveUp;
     $('resultEyebrow').textContent=text.result;$('resultTitle').textContent=text.runResult;$('scoreLabel').textContent=text.score;$('distanceLabel').textContent=text.distance;$('maxComboLabel').textContent=text.maxCombo;$('accuracyLabel').textContent=text.accuracy;$('practicedLabel').textContent=text.practiced;$('retryBtn').textContent=text.retry;$('titleBtn').textContent=text.title;
     ui.canvas.setAttribute('aria-label',text.runResult);ui.mute.setAttribute('aria-label','Sound');ui.replay.setAttribute('aria-label',text.listen);
     ui.title.lang=languageCodes[titleLanguage];
@@ -644,6 +651,7 @@
   document.querySelectorAll('.language-choice').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
   document.querySelectorAll('.tutorial-language').forEach(button=>button.addEventListener('click',()=>applyTitleLanguage(button.dataset.language)));
   $('rightHandBtn').addEventListener('click',()=>applyHandedness(false));$('leftHandBtn').addEventListener('click',()=>applyHandedness(true));
+  $('pauseRightHandBtn').addEventListener('click',()=>applyHandedness(false));$('pauseLeftHandBtn').addEventListener('click',()=>applyHandedness(true));
   $('handHelpBtn').addEventListener('click',()=>{const open=$('handHelp').classList.toggle('active');$('handHelpBtn').setAttribute('aria-expanded',String(open))});
   $('tutorialBack').addEventListener('click',previousTutorialStep);$('tutorialNext').addEventListener('click',nextTutorialStep);
   ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTutorialBtn').addEventListener('click',()=>openTutorial(true));$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
