@@ -252,7 +252,7 @@
     {jump:['jizou','jitensha','kibako'],duck:['karasu','roopu','take']},
     {jump:['oke','jizou','andon','kibako','andon'],duck:['choochin','torii','take','tako','sakura_branch','kanban']},
     {jump:['gaikotsu','te','haka','andon','nihon_ningyo'],duck:['hitodama','te_down']},
-    {jump:['gama_sennin','kitsune_sennin','tanuki_spider','tanukisennin'],duck:['kitsune_kintoun','ryuu','tanuki_kintoun','tengu']}
+    {jump:['gama_sennin','kitsune_sennin','koi','tanuki_spider','tanukisennin'],duck:['kitsune_kintoun','ryuu','tanuki_kintoun','tengu']}
   ];
   const obstacleAssets = {
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable',groundOffset:4},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
@@ -583,8 +583,17 @@
     }
     ctx.restore();
   }
+  function drawSageCloudPath(ground){
+    const spacing=36,offset=(state.scroll*.35)%spacing;
+    ctx.save();ctx.shadowColor='rgba(205,239,255,.7)';ctx.shadowBlur=12;
+    ctx.fillStyle='rgba(246,252,255,.88)';ctx.fillRect(0,ground-3,W,18);
+    for(let x=-offset-spacing;x<W+spacing;x+=spacing){
+      ctx.beginPath();ctx.arc(x,ground+3,14,0,Math.PI*2);ctx.arc(x+14,ground-1,11,0,Math.PI*2);ctx.arc(x+27,ground+5,13,0,Math.PI*2);ctx.fill();
+    }
+    ctx.shadowBlur=0;ctx.fillStyle='rgba(157,217,239,.72)';ctx.fillRect(0,ground+14,W,3);ctx.restore();
+  }
   function drawWorld(dt){const si=stageIndex(),s=stages[si],p=power(),ground=H*.84;ctx.save();if(state.shake>0){ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);if(dt>0)state.shake*=.88}const hasBackground=drawStageBackground(si);if(!hasBackground){drawSky(s);mountains(s.ground,ground,90,170,state.scroll*.13);mountains(s.accent,ground+12,58,115,state.scroll*.28)}
-    if(si===2){drawWaveStageBridge(ground)}else{ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}}
+    if(si===2){drawWaveStageBridge(ground)}else if(si===7){drawSageCloudPath(ground)}else{ctx.fillStyle=hasBackground?'rgba(24,18,28,.24)':s.ground;ctx.fillRect(0,ground,W,H-ground);ctx.fillStyle=s.accent;ctx.fillRect(0,ground,W,4);for(let x=-(state.scroll%48);x<W;x+=48){ctx.fillStyle='#ffffff14';ctx.fillRect(x,ground+18,30,5)}}
     if(state.phase==='question'){const gx=W*.52,gg=ctx.createLinearGradient(gx,0,W,0);gg.addColorStop(0,'rgba(255,255,255,0)');gg.addColorStop(.32,'rgba(255,255,255,.78)');gg.addColorStop(1,'rgba(235,245,255,.96)');ctx.fillStyle=gg;ctx.fillRect(gx,80,W-gx,ground-80);for(let i=0;i<5;i++){ctx.fillStyle=`rgba(255,255,255,${.18+i*.05})`;ctx.beginPath();ctx.arc(gx+40+i*42,ground*.48+(i%2)*35,60,0,Math.PI*2);ctx.fill()}}
     if(state.obstacle){
       const obstacle=state.obstacle;obstacle.x-=p.speed*dt;
