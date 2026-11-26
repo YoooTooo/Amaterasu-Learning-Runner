@@ -322,7 +322,8 @@
   }
   function stageBackgroundFile(index){
     const files=stages[index].backgrounds,progress=stageProgress(index);
-    const imageIndex=Math.min(files.length-1,Math.floor(progress*files.length));
+    const frameProgress=stages[index].horror?Math.min(1,progress*1.5):progress;
+    const imageIndex=Math.min(files.length-1,Math.floor(frameProgress*files.length));
     return files[imageIndex];
   }
   function stageBackground(index){
@@ -337,7 +338,7 @@
   function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?tr().jumpReady:tr().jump}
   function flash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('on')}
   function damageFlash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('damage')}
-  function startHitEffect(){const start=performance.now();state.hitEffect={start,stopEnd:start+160,slowEnd:start+480,end:start+760};state.shake=20;damageFlash();if(!state.muted){damageAudio.pause();damageAudio.currentTime=0;damageAudio.play().catch(()=>{})}}
+  function startHitEffect(){const start=performance.now();state.hitEffect={start,stopEnd:start+190,slowEnd:start+690,end:start+880};state.shake=20;damageFlash();if(!state.muted){damageAudio.pause();damageAudio.currentTime=0;damageAudio.play().catch(()=>{})}}
   function knockbackOffset(now){
     const hit=state.hitEffect;if(!hit||now<hit.stopEnd||now>=hit.end)return 0;
     const progress=(now-hit.stopEnd)/(hit.end-hit.stopEnd);
@@ -502,10 +503,7 @@
     let sx=0,sy=0,sw=img.naturalWidth,sh=img.naturalHeight;
     if(sourceRatio>targetRatio){
       sw=img.naturalHeight*targetRatio;
-      // The horror sequence is authored around the doll approaching the center.
-      // Keep that composition locked instead of panning past it near the finale.
-      const horizontalFocus=stages[index].horror ? 0.5 : progress;
-      sx=(img.naturalWidth-sw)*horizontalFocus;
+      sx=(img.naturalWidth-sw)*progress;
     }else{
       sh=img.naturalWidth/targetRatio;
       sy=(img.naturalHeight-sh)*.5;
@@ -636,7 +634,7 @@
     if(state.hitEffect){
       if(now>=state.hitEffect.end)state.hitEffect=null;
       else if(now<state.hitEffect.stopEnd)timeScale=0;
-      else if(now<state.hitEffect.slowEnd)timeScale=.3;
+      else if(now<state.hitEffect.slowEnd)timeScale=.18;
     }
     const step=state.tutorialActive?0:dt*timeScale;state.phaseT+=step;const p=power();state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
     const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}
