@@ -245,10 +245,10 @@
     {at:11300,name:'たぬきと狐の仙人の里',backgrounds:['8.png'],sky:['#8bd8ef','#f5e9b6'],ground:'#66594d',accent:'#f4d36d',jump:['雲の塊','ひょうたん','仙桃の籠'],duck:['浮遊物'],endless:true}
   ];
   const stageObstacleSets = [
-    {jump:['rock','kirikabu','andon'],duck:['choochin','torii']},
+    {jump:['kirikabu','andon'],duck:['choochin','torii']},
     {jump:['touboku','jitensha'],duck:['sakura_branch','kanban']},
     {jump:['kibako','oke'],duck:['tori','tako','karasu']},
-    {jump:['kirikabu','rock','jizou'],duck:['torii','tako']},
+    {jump:['kirikabu','jizou'],duck:['torii','tako']},
     {jump:['jizou','jitensha','kibako'],duck:['karasu','roopu','take']},
     {jump:['oke','jizou','andon','kibako','andon'],duck:['choochin','torii','take','tako','sakura_branch','kanban']},
     {jump:['gaikotsu','te','haka','andon','nihon_ningyo'],duck:['hitodama','spirit','te_down']},
@@ -258,7 +258,7 @@
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable',groundOffset:4},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
     choochin:{folder:'animate',frames:5,fps:5},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},roopu:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},te_down:{folder:'animate',file:'te',frames:2,fps:5,flipY:true},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
     kanban:{folder:'depth',frames:2,scale:1.18,groundOffset:10},take:{folder:'depth',frames:2,scale:1.28,groundOffset:12},torii:{folder:'depth',frames:2,scale:1.28,groundOffset:12},sakura_branch:{folder:'depth',file:'sakura',frames:2,scale:1.28},
-    nihon_ningyo:{folder:'animate',file:'ningyoo',frames:3,proximityFrames:true,scale:1.08},rock:{kind:'procedural'},spirit:{kind:'procedural'}
+    nihon_ningyo:{folder:'animate',file:'ningyoo',frames:3,proximityFrames:true,scale:1.08},spirit:{kind:'procedural'}
   };
   const obstacleImages={};
   Object.entries(obstacleAssets).forEach(([name,asset])=>{if(!asset.folder)return;const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${asset.file||name}.webp`;obstacleImages[name]=img});
@@ -542,10 +542,7 @@
   }
   function drawProceduralObstacle(name,x,y,size){
     ctx.save();ctx.translate(x,y);ctx.lineWidth=Math.max(2,size*.025);ctx.lineJoin='round';
-    if(name==='rock'){
-      ctx.fillStyle='#625b66';ctx.strokeStyle='#302b35';ctx.beginPath();ctx.moveTo(-size*.38,size*.5);ctx.lineTo(-size*.3,size*.08);ctx.lineTo(-size*.08,-size*.2);ctx.lineTo(size*.25,-size*.08);ctx.lineTo(size*.4,size*.5);ctx.closePath();ctx.fill();ctx.stroke();
-      ctx.strokeStyle='#8b8490';ctx.beginPath();ctx.moveTo(-size*.18,size*.17);ctx.lineTo(size*.02,-size*.02);ctx.lineTo(size*.2,size*.12);ctx.stroke();
-    }else if(name==='sakura_branch'){
+    if(name==='sakura_branch'){
       ctx.strokeStyle='#563527';ctx.lineWidth=size*.09;ctx.beginPath();ctx.moveTo(-size*.48,size*.15);ctx.quadraticCurveTo(-size*.08,-size*.08,size*.48,-size*.22);ctx.stroke();
       ctx.lineWidth=size*.035;for(let i=-3;i<=3;i++){const bx=i*size*.13,by=-size*(.08+i*.018);ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx-size*.05,by-size*.2);ctx.stroke()}
       for(let i=-4;i<=4;i++){ctx.fillStyle=i%2?'#ffafc8':'#ffd5e2';ctx.beginPath();ctx.arc(i*size*.115,-size*(.22+(i%3)*.045),size*.055,0,Math.PI*2);ctx.fill()}
