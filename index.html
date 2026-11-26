@@ -244,8 +244,8 @@
   const obstacleAssets = {
     andon:{folder:'stable'},gaikotsu:{folder:'stable'},gaikotsu2:{folder:'stable'},haka:{folder:'stable'},jitensha:{folder:'stable'},jizou:{folder:'stable'},kibako:{folder:'stable'},kirikabu:{folder:'stable'},oke:{folder:'stable'},touboku:{folder:'stable'},
     choochin:{folder:'animate',frames:5,fps:5},gama_sennin:{folder:'animate',frames:2,fps:3},hitodama:{folder:'animate',frames:2,fps:5},karasu:{folder:'animate',frames:4,fps:8},kitsune_sennin:{folder:'animate',frames:2,fps:3},koi:{folder:'animate',frames:2,fps:4},roopu:{folder:'animate',frames:2,fps:4},ryuu:{folder:'animate',frames:2,fps:3,scale:1.18},tako:{folder:'animate',frames:2,fps:4},tanuki_kintoun:{folder:'animate',frames:2,fps:4},tanukisennin:{folder:'animate',frames:2,fps:3},te:{folder:'animate',frames:2,fps:5},te_down:{folder:'animate',file:'te',frames:2,fps:5,flipY:true},tengu:{folder:'animate',frames:2,fps:4},tori:{folder:'animate',frames:2,fps:7},
-    kanban:{folder:'depth',frames:2,scale:1.18},take:{folder:'depth',frames:2,scale:1.28},torii:{folder:'depth',frames:2,scale:1.28},
-    rock:{kind:'procedural'},sakura_branch:{kind:'procedural'},nihon_ningyo:{kind:'procedural'},spirit:{kind:'procedural'}
+    kanban:{folder:'depth',frames:2,scale:1.18},take:{folder:'depth',frames:2,scale:1.28},torii:{folder:'depth',frames:2,scale:1.28},sakura_branch:{folder:'depth',file:'sakura',frames:2,scale:1.28},
+    nihon_ningyo:{folder:'animate',file:'ningyoo',frames:3,proximityFrames:true,scale:1.08},rock:{kind:'procedural'},spirit:{kind:'procedural'}
   };
   const obstacleImages={};
   Object.entries(obstacleAssets).forEach(([name,asset])=>{if(!asset.folder)return;const img=new Image();img.src=`asset/object/optimized/${asset.folder}/${asset.file||name}.webp`;obstacleImages[name]=img});
@@ -295,9 +295,11 @@
     'asset/correct/levelUpLv7++++++.mp3','asset/correct/levelUpLv7+++++++.mp3',
     'asset/correct/levelUpLv7++++++++.mp3','asset/correct/levelUpLv7+++++++++.mp3'
   ];
-  const correctAudio = new Map([...milestoneSounds.values(),...climaxSounds].map(src=>{
+  const normalCorrectSound='asset/audio/SE/correct_answer.mp3';
+  const correctAudio = new Map([normalCorrectSound,...milestoneSounds.values(),...climaxSounds].map(src=>{
     const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
   }));
+  const damageAudio=new Audio('asset/audio/SE/kurai.mp3');damageAudio.preload='auto';damageAudio.volume=.82;
   const state = {running:false,paused:false,tutorialActive:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
@@ -335,7 +337,7 @@
   function setReady(v){state.jumpReady=v;ui.jump.classList.toggle('ready',v);ui.jump.textContent=v?tr().jumpReady:tr().jump}
   function flash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('on')}
   function damageFlash(){ui.flash.className='flash';void ui.flash.offsetWidth;ui.flash.classList.add('damage')}
-  function startHitEffect(){const start=performance.now();state.hitEffect={start,stopEnd:start+160,slowEnd:start+480,end:start+760};state.shake=20;damageFlash()}
+  function startHitEffect(){const start=performance.now();state.hitEffect={start,stopEnd:start+160,slowEnd:start+480,end:start+760};state.shake=20;damageFlash();if(!state.muted){damageAudio.pause();damageAudio.currentTime=0;damageAudio.play().catch(()=>{})}}
   function knockbackOffset(now){
     const hit=state.hitEffect;if(!hit||now<hit.stopEnd||now>=hit.end)return 0;
     const progress=(now-hit.stopEnd)/(hit.end-hit.stopEnd);
@@ -407,7 +409,7 @@
     if(state.voiceSpeaking&&retry<8){later(()=>playCorrectSound(combo,retry+1),120);return}
     let src=milestoneSounds.get(combo);
     if(!src&&combo>50&&combo%10===0){src=climaxSounds[Math.floor(Math.random()*climaxSounds.length)]}
-    if(!src){playItemChime();return}
+    if(!src)src=normalCorrectSound;
     const audio=correctAudio.get(src);if(!audio)return;
     audio.pause();audio.currentTime=0;audio.play().catch(()=>{});
   }
@@ -488,7 +490,7 @@
   }
   function giveUp(){if(!state.running)return;state.paused=false;ui.pauseMenu.classList.remove('active');endRun()}
 
-  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialShownThisSession;Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),matchDeck:[],matchHistory:[],last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=showTutorial;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
+  function startRun(){clearTimers();ensureAudioContext();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});damageAudio.pause();damageAudio.currentTime=0;if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialShownThisSession;Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),matchDeck:[],matchHistory:[],last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=showTutorial;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(question,850)}
   function endRun(){if(!state.running)return;state.running=false;state.paused=false;state.tutorialActive=false;state.accepting=false;state.token++;clearTimers();if('speechSynthesis'in window)speechSynthesis.cancel();cancelAnimationFrame(raf);ui.pauseMenu.classList.remove('active');const text=tr(),resultBackground=stageBackgroundFile(stageIndex());ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;$('resultScore').textContent=state.score.toLocaleString();$('resultDistance').textContent=Math.floor(state.distance).toLocaleString();$('resultCombo').textContent=state.maxCombo;$('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);$('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];const list=$('kanaList');list.innerHTML='';[...state.practiced.keys()].forEach(k=>{const e=document.createElement('span');e.className='kana-tag';e.textContent=k;list.appendChild(e)});$('learningTip').textContent=text.tip(state.correct);show('result')}
 
   function rounded(x,y,w,h,r,fill){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill()}
@@ -540,7 +542,13 @@
     const drawY=isDepth?ground+8-size:(obstacle.type==='jump'?ground+8-size:ground-AIR_OBSTACLE_HEIGHT-size*.5);
     if(asset?.kind==='procedural'){drawProceduralObstacle(obstacle.assetKey,obstacle.x,drawY+size*.5,size);return}
     if(asset&&img?.complete&&img.naturalWidth){
-      const frames=asset.frames||1,frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
+      const frames=asset.frames||1;
+      let frame=isDepth?(layer==='back'?0:1):(asset.fps?Math.floor(state.phaseT*asset.fps)%frames:obstacle.variant%frames);
+      if(asset.proximityFrames){
+        const distanceToPlayer=obstacle.x-playerScreenX(),travel=OBSTACLE_SPAWN_AHEAD-OBSTACLE_CONTACT_AHEAD;
+        const approach=Math.max(0,Math.min(.999,(OBSTACLE_SPAWN_AHEAD-distanceToPlayer)/travel));
+        frame=Math.floor(approach*frames);
+      }
       ctx.save();ctx.shadowColor='rgba(8,5,12,.5)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;ctx.translate(obstacle.x,drawY+size*.5);if(asset.flipY)ctx.scale(1,-1);
       ctx.drawImage(img,frame*384,0,384,384,-size*.5,-size*.5,size,size);ctx.restore();return;
     }
@@ -641,7 +649,7 @@
   $('handHelpBtn').addEventListener('click',()=>{const open=$('handHelp').classList.toggle('active');$('handHelpBtn').setAttribute('aria-expanded',String(open))});
   $('tutorialBack').addEventListener('click',previousTutorialStep);$('tutorialNext').addEventListener('click',nextTutorialStep);
   ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTutorialBtn').addEventListener('click',()=>openTutorial(true));$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
-  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0})}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause())}});
+  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',()=>{show('title')});ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});damageAudio.pause();damageAudio.currentTime=0}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause());damageAudio.pause()}});
 })();
 </script>
 </body>
