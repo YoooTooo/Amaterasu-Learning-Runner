@@ -390,10 +390,11 @@
   }
   function beginStageTransition(nextIndex){
     if(state.transitioning||nextIndex>=stages.length)return;
+    const now=performance.now(),landing=state.characterAnim?.type==='land'&&now<state.characterAnim.end;
+    if(state.wasAirborne||state.playerY<0||landing){state.transitionPending=nextIndex;return}
     state.transitioning=true;state.transitionPending=null;state.stageTransition={nextIndex,start:performance.now(),duration:2300};state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
     ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;state.playerY=0;state.playerV=0;state.wasAirborne=false;
     if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;duckMusic(false);
-    if(activeMusic)activeMusic.pause();
     const nextMusic=getStageMusic(nextIndex);nextMusic.preload='auto';nextMusic.load();
     loadStageObstacleImages(nextIndex);
     loadBackground(stages[nextIndex].backgrounds[0]);
@@ -762,7 +763,8 @@
       else{beginStageTransition(currentStage+1);step=0}
     }
     if(advanceDistance)state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
-    const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;playMovementSound(landingAudio);if(!state.characterAnim)setCharacterAnimation('land',260)}}
+    const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;playMovementSound(landingAudio);if(state.transitionPending!==null||!state.characterAnim)setCharacterAnimation('land',260)}}
+    if(state.transitionPending!==null&&!state.wasAirborne&&state.playerY>=0&&!(state.characterAnim?.type==='land'&&now<state.characterAnim.end))beginStageTransition(state.transitionPending);
     drawWorld(step);updateHud();updateHorrorAudio(now,stageIndex());raf=requestAnimationFrame(loop);
   }
 
