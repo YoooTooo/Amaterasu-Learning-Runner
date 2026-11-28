@@ -316,16 +316,12 @@
   const damageAudio=new Audio('asset/audio/SE/kurai.mp3');damageAudio.preload='auto';damageAudio.volume=.82;
   const timerAudio=new Audio('asset/audio/SE/timer.mp3');timerAudio.preload='auto';timerAudio.volume=.58;
   const bgmSources=['stage1.mp3','stage2.mp3','stage3.mp3','stage4.mp3','stage5/fuurin.mp3','stage6.mp3','stage7.mp3','stage8.mp3'];
-  const bgmTracks=bgmSources.map(file=>{const audio=new Audio(`asset/BGM/${file}`);audio.preload='auto';audio.loop=true;audio.volume=file.includes('stage5/')?.8:.5;return audio});
-  const titleBgm=new Audio('asset/BGM/title.mp3');titleBgm.preload='auto';titleBgm.loop=true;titleBgm.volume=.5;
-  const horrorSounds={
-    bird:new Audio('asset/BGM/stage5/bird.mp3'),
-    appear:new Audio('asset/BGM/stage5/ningyo_apprear.mp3'),
-    coming:new Audio('asset/BGM/stage5/ningyo_comming.mp3'),
-    up:new Audio('asset/BGM/stage5/ningyo_up.mp3')
+  const bgmTracks=new Array(bgmSources.length);
+  let titleBgm=null;
+  const horrorSources={
+    bird:'bird.mp3',appear:'ningyo_apprear.mp3',coming:'ningyo_comming.mp3',up:'ningyo_up.mp3'
   };
-  horrorSounds.bird.volume=.72;horrorSounds.appear.volume=.86;horrorSounds.coming.volume=.9;horrorSounds.up.volume=.95;
-  Object.values(horrorSounds).forEach(audio=>audio.preload='auto');
+  const horrorVolumes={bird:.72,appear:.86,coming:.9,up:.95},horrorSounds={};
   let activeMusic=null,activeMusicKey='',horrorPhase=0,nextBirdAt=0;
   const state = {running:false,paused:false,tutorialActive:false,starting:false,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
@@ -333,6 +329,14 @@
   const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
+  function makeMusic(src,volume){const audio=new Audio();audio.preload='none';audio.loop=true;audio.volume=volume;audio.src=src;return audio}
+  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.8:.5))}
+  function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/BGM/title.mp3',.5))}
+  function getHorrorSound(name){
+    if(horrorSounds[name])return horrorSounds[name];
+    const audio=new Audio();audio.preload='none';audio.volume=horrorVolumes[name];audio.src=`asset/BGM/stage5/${horrorSources[name]}`;
+    return horrorSounds[name]=audio;
+  }
   function stopHorrorSounds(){Object.values(horrorSounds).forEach(audio=>{audio.pause();audio.currentTime=0})}
   function playMusic(key,audio){
     if(activeMusicKey===key&&activeMusic===audio){if(!state.muted&&!state.paused)audio.play().catch(()=>{});return}
@@ -340,9 +344,9 @@
     activeMusic=audio;activeMusicKey=key;
     if(!state.muted&&!state.paused)audio.play().catch(()=>{});
   }
-  function playHorrorSound(name){if(state.muted||state.paused)return;const audio=horrorSounds[name];audio.pause();audio.currentTime=0;audio.play().catch(()=>{})}
+  function playHorrorSound(name){if(state.muted||state.paused)return;const audio=getHorrorSound(name);audio.pause();audio.currentTime=0;audio.play().catch(()=>{})}
   function resetHorrorAudio(){horrorPhase=0;nextBirdAt=performance.now()+7000+Math.random()*7000;stopHorrorSounds()}
-  function syncStageMusic(index){playMusic(`stage-${index}`,bgmTracks[index])}
+  function syncStageMusic(index){playMusic(`stage-${index}`,getStageMusic(index))}
   function updateHorrorAudio(now,index){
     if(index!==4)return;
     const progress=stageProgress(4);
@@ -350,7 +354,7 @@
     while(horrorPhase<phase){horrorPhase++;playHorrorSound(horrorPhase===1?'appear':horrorPhase===2?'coming':'up')}
     if(now>=nextBirdAt){playHorrorSound('bird');nextBirdAt=now+7000+Math.random()*11000}
   }
-  function showTitle(){show('title');playMusic('title',titleBgm)}
+  function showTitle(){show('title');playMusic('title',getTitleMusic())}
   function later(fn,ms){const id=setTimeout(fn,ms);timers.push(id);return id} function clearTimers(){timers.forEach(clearTimeout);timers=[]}
   function power(){let p=powers[0];for(const x of powers)if(state.combo>=x.at)p=x;return p}
   function characterForm(){return state.combo>=20?'super':state.combo>=3?'normal':'lux'}
