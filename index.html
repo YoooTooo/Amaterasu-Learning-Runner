@@ -390,15 +390,19 @@
   }
   function beginStageTransition(nextIndex){
     if(state.transitioning||nextIndex>=stages.length)return;
+    const prepared=state.transitionPending===nextIndex;
+    state.transitionPending=nextIndex;
+    if(!prepared){
+      state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
+      ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;
+      if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;duckMusic(false);
+      const nextMusic=getStageMusic(nextIndex);nextMusic.preload='auto';nextMusic.load();
+      loadStageObstacleImages(nextIndex);loadBackground(stages[nextIndex].backgrounds[0]);
+      setStatus(`${tr().newStage}: ${tr().stages[nextIndex]}`,'good');
+    }
     const now=performance.now(),landing=state.characterAnim?.type==='land'&&now<state.characterAnim.end;
-    if(state.wasAirborne||state.playerY<0||landing){state.transitionPending=nextIndex;return}
-    state.transitioning=true;state.transitionPending=null;state.stageTransition={nextIndex,start:performance.now(),duration:2300};state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
-    ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;state.playerY=0;state.playerV=0;state.wasAirborne=false;
-    if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;duckMusic(false);
-    const nextMusic=getStageMusic(nextIndex);nextMusic.preload='auto';nextMusic.load();
-    loadStageObstacleImages(nextIndex);
-    loadBackground(stages[nextIndex].backgrounds[0]);
-    setStatus(`${tr().newStage}: ${tr().stages[nextIndex]}`,'good');
+    if(state.wasAirborne||state.playerY<0||landing)return;
+    state.transitioning=true;state.transitionPending=null;state.stageTransition={nextIndex,start:now,duration:2300};state.playerY=0;state.playerV=0;state.wasAirborne=false;
   }
   function updateStageTransition(now){
     const transition=state.stageTransition;if(!transition)return;
@@ -759,8 +763,7 @@
     const currentStage=stageIndex(),nextStage=stages[currentStage+1];
     if(step>0&&nextStage&&state.distance+p.speed*step*.34>=nextStage.at){
       state.distance=nextStage.at-.01;advanceDistance=false;
-      if(state.accepting||(state.obstacle&&!state.obstacle.resolved))state.transitionPending=currentStage+1;
-      else{beginStageTransition(currentStage+1);step=0}
+      beginStageTransition(currentStage+1);if(state.transitioning)step=0;
     }
     if(advanceDistance)state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
     const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;playMovementSound(landingAudio);if(state.transitionPending!==null||!state.characterAnim)setCharacterAnimation('land',260)}}
