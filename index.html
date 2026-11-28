@@ -347,7 +347,7 @@
     activeMusic=audio;activeMusicKey=key;
     if(!state.musicMuted&&!state.paused)audio.play().catch(()=>{});
   }
-  function duckMusic(ducked){if(activeMusic)activeMusic.volume=activeMusic.normalVolume*(ducked?.03:1)}
+  function duckMusic(ducked){if(activeMusic)activeMusic.volume=ducked?.01:activeMusic.normalVolume}
   function playHorrorSound(name){if(state.muted||state.paused)return;const audio=getHorrorSound(name);audio.pause();audio.currentTime=0;audio.play().catch(()=>{})}
   function resetHorrorAudio(){horrorPhase=0;nextBirdAt=performance.now()+7000+Math.random()*7000;stopHorrorSounds()}
   function syncStageMusic(index){playMusic(`stage-${index}`,getStageMusic(index))}
