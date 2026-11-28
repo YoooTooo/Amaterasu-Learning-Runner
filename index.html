@@ -318,6 +318,8 @@
   function getCorrectAudio(src){let audio=correctAudio.get(src);if(audio)return audio;audio=new Audio(src);audio.preload='none';audio.volume=.39;correctAudio.set(src,audio);return audio}
   const damageAudio=new Audio('asset/audio/SE/kurai.mp3');damageAudio.preload='auto';damageAudio.volume=.41;
   const timerAudio=new Audio('asset/audio/SE/timer.mp3');timerAudio.preload='auto';timerAudio.volume=.29;
+  const jumpAudio=new Audio('asset/audio/SE/jump.mp3');jumpAudio.preload='auto';jumpAudio.volume=.45;
+  const landingAudio=new Audio('asset/audio/SE/landing.mp3');landingAudio.preload='auto';landingAudio.volume=.45;
   const bgmSources=['stage1.mp3','stage2.mp3','stage3.mp3','stage4.mp3','stage5/fuurin.mp3','stage6.mp3','stage7.mp3','stage8.mp3'];
   const bgmTracks=new Array(bgmSources.length);
   let titleBgm=null;
@@ -389,7 +391,7 @@
   function beginStageTransition(nextIndex){
     if(state.transitioning||nextIndex>=stages.length)return;
     state.transitioning=true;state.transitionPending=null;state.stageTransition={nextIndex,start:performance.now(),duration:2300};state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
-    ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;state.playerY=0;state.playerV=0;
+    ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;state.playerY=0;state.playerV=0;state.wasAirborne=false;
     if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;duckMusic(false);
     if(activeMusic)activeMusic.pause();
     const nextMusic=getStageMusic(nextIndex);nextMusic.preload='auto';nextMusic.load();
@@ -460,6 +462,7 @@
     return audioContext;
   }
   function stopTimerSound(){timerAudio.pause();timerAudio.currentTime=0}
+  function playMovementSound(audio){if(state.muted)return;audio.pause();audio.currentTime=0;audio.play().catch(()=>{})}
   function playTimerSound(){if(state.muted)return;stopTimerSound();timerAudio.play().catch(()=>{})}
   function unlockTimerSound(){timerAudio.muted=true;timerAudio.play().then(()=>{timerAudio.pause();timerAudio.currentTime=0;timerAudio.muted=false}).catch(()=>{timerAudio.muted=false})}
   function stopQuestionTimer(){const fill=$('questionTimerFill');fill.getAnimations?.().forEach(animation=>animation.cancel());fill.style.width='0%'}
@@ -534,7 +537,7 @@
     const tick=()=>{if(!state.running||state.paused||token!==state.token)return;if(n>0){ui.count.textContent=n--;later(tick,1000);return}stopTimerSound();ui.count.textContent='GO!';state.starting=false;ui.pause.disabled=false;state.last=performance.now();later(()=>{if(!state.running||state.paused||token!==state.token)return;ui.count.textContent='';question()},450)};
     tick();
   }
-  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+OBSTACLE_SPAWN_AHEAD,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=JUMP_VELOCITY;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null}}
+  function resolve(token){if(!state.running||token!==state.token)return;const q=state.question,stageNumber=stageIndex();state.phase='reveal';state.phaseT=0;const type=q.match?'jump':'duck',choices=stageObstacleSets[stageNumber][type],assetKey=choices[Math.floor(Math.random()*choices.length)],asset=obstacleAssets[assetKey];state.obstacle={type,x:playerScreenX()+OBSTACLE_SPAWN_AHEAD,assetKey,variant:Math.floor(Math.random()*(asset.frames||1)),token,resolved:false};ui.count.textContent='';setStatus(q.match?tr().match:tr().different);if(state.jumpReady){state.playerV=JUMP_VELOCITY;state.playerY=-1;state.wasAirborne=true;state.characterAnim=null;playMovementSound(jumpAudio)}}
   function judge(token){
     if(!state.running||token!==state.token)return;
     const ok=state.jumpReady===state.question.match,previousForm=characterForm();state.answered++;state.reviewHistory.push({kana:state.question.shown,ok});
@@ -759,7 +762,7 @@
       else{beginStageTransition(currentStage+1);step=0}
     }
     if(advanceDistance)state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
-    const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}
+    const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;playMovementSound(landingAudio);if(!state.characterAnim)setCharacterAnimation('land',260)}}
     drawWorld(step);updateHud();updateHorrorAudio(now,stageIndex());raf=requestAnimationFrame(loop);
   }
 
