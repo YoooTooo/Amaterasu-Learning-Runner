@@ -477,7 +477,8 @@
   function speak(kana){
     if(state.muted)return;
     if('speechSynthesis' in window){
-      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${kana}、${kana}`);
+      const speechKana=({は:'ハ',へ:'ヘ',を:'ヲ'})[kana]||kana;
+      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${speechKana}、${speechKana}`);
       u.lang='ja-JP';u.rate=.52;u.pitch=.96;u.volume=1;if(preferredJapaneseVoice)u.voice=preferredJapaneseVoice;
       u.onstart=()=>{state.voiceSpeaking=true;duckMusic(true)};
       u.onend=u.onerror=()=>{state.voiceSpeaking=false;duckMusic(false)};
