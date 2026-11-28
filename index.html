@@ -331,7 +331,7 @@
   const state = {running:false,paused:false,tutorialActive:false,starting:false,transitioning:false,transitionPending:null,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,musicMuted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],kanaDeck:[],shownCounts:new Map(),lastKana:'',last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
-  const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
+  const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195,STAGE_QUESTION_GUARD_DISTANCE=230;
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
   function makeMusic(src,volume){const audio=new Audio();audio.preload='none';audio.loop=true;audio.normalVolume=volume;audio.volume=volume;audio.src=src;return audio}
@@ -530,6 +530,8 @@
   }
   function question(){
     if(!state.running||state.paused||state.transitioning||state.transitionPending!==null||state.hearts<=0)return;
+    const currentStage=stageIndex(),nextStage=stages[currentStage+1];
+    if(nextStage&&nextStage.at-state.distance<=STAGE_QUESTION_GUARD_DISTANCE){state.distance=nextStage.at-.01;beginStageTransition(currentStage+1);return}
     state.token++;const token=state.token,audio=nextKana(),match=nextMatch(),shown=match?audio:balancedDifferentKana(audio);
     state.shownCounts.set(shown,(state.shownCounts.get(shown)||0)+1);
     state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;
