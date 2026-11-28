@@ -720,7 +720,7 @@
       frame=CHARACTER_FRAMES.land;
     }else if(state.playerY<-3){
       frame=CHARACTER_FRAMES.jump;
-    }else if(state.tutorialActive){
+    }else if(state.tutorialActive||state.starting){
       frame=CHARACTER_FRAMES.stand;
     }else{
       frame=CHARACTER_FRAMES.walk[Math.floor(state.scroll/18)%CHARACTER_FRAMES.walk.length];
