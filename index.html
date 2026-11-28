@@ -109,7 +109,7 @@
         <div id="stageHud" class="stage-chip">STAGE 1・SHRINE</div>
       </div>
       <button id="pauseBtn" class="pause-button" type="button" aria-label="Pause">Ⅱ</button>
-      <button id="muteBtn" class="mute" aria-label="Sound">🔊</button>
+      <button id="muteBtn" class="mute" aria-label="BGM OFF">🔊</button>
       <div id="status" class="status">LISTEN…</div>
       <div id="count" class="count">—</div>
       <div id="flash" class="flash"></div>
@@ -311,27 +311,27 @@
   ];
   const normalCorrectSound='asset/audio/SE/correct_answer.mp3';
   const correctAudio = new Map([normalCorrectSound,...milestoneSounds.values(),...climaxSounds].map(src=>{
-    const audio=new Audio(src);audio.preload='auto';audio.volume=.78;return [src,audio];
+    const audio=new Audio(src);audio.preload='auto';audio.volume=.39;return [src,audio];
   }));
-  const damageAudio=new Audio('asset/audio/SE/kurai.mp3');damageAudio.preload='auto';damageAudio.volume=.82;
-  const timerAudio=new Audio('asset/audio/SE/timer.mp3');timerAudio.preload='auto';timerAudio.volume=.58;
+  const damageAudio=new Audio('asset/audio/SE/kurai.mp3');damageAudio.preload='auto';damageAudio.volume=.41;
+  const timerAudio=new Audio('asset/audio/SE/timer.mp3');timerAudio.preload='auto';timerAudio.volume=.29;
   const bgmSources=['stage1.mp3','stage2.mp3','stage3.mp3','stage4.mp3','stage5/fuurin.mp3','stage6.mp3','stage7.mp3','stage8.mp3'];
   const bgmTracks=new Array(bgmSources.length);
   let titleBgm=null;
   const horrorSources={
     bird:'bird.mp3',appear:'ningyo_apprear.mp3',coming:'ningyo_comming.mp3',up:'ningyo_up.mp3'
   };
-  const horrorVolumes={bird:.72,appear:.86,coming:.9,up:.95},horrorSounds={};
+  const horrorVolumes={bird:.36,appear:.43,coming:.45,up:.475},horrorSounds={};
   let activeMusic=null,activeMusicKey='',horrorPhase=0,nextBirdAt=0;
-  const state = {running:false,paused:false,tutorialActive:false,starting:false,transitioning:false,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
+  const state = {running:false,paused:false,tutorialActive:false,starting:false,transitioning:false,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,musicMuted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
   const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
   function makeMusic(src,volume){const audio=new Audio();audio.preload='none';audio.loop=true;audio.normalVolume=volume;audio.volume=volume;audio.src=src;return audio}
-  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.8:.1))}
-  function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/BGM/title.mp3',.25))}
+  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.4:.05))}
+  function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/BGM/title.mp3',.125))}
   function getHorrorSound(name){
     if(horrorSounds[name])return horrorSounds[name];
     const audio=new Audio();audio.preload='none';audio.volume=horrorVolumes[name];audio.src=`asset/BGM/stage5/${horrorSources[name]}`;
@@ -339,12 +339,12 @@
   }
   function stopHorrorSounds(){Object.values(horrorSounds).forEach(audio=>{audio.pause();audio.currentTime=0})}
   function playMusic(key,audio){
-    if(activeMusicKey===key&&activeMusic===audio){if(!state.muted&&!state.paused)audio.play().catch(()=>{});return}
+    if(activeMusicKey===key&&activeMusic===audio){if(!state.musicMuted&&!state.paused)audio.play().catch(()=>{});return}
     if(activeMusic){activeMusic.pause();activeMusic.currentTime=0}
     activeMusic=audio;activeMusicKey=key;
-    if(!state.muted&&!state.paused)audio.play().catch(()=>{});
+    if(!state.musicMuted&&!state.paused)audio.play().catch(()=>{});
   }
-  function duckMusic(ducked){if(activeMusic)activeMusic.volume=activeMusic.normalVolume*(ducked?.28:1)}
+  function duckMusic(ducked){if(activeMusic)activeMusic.volume=activeMusic.normalVolume*(ducked?.03:1)}
   function playHorrorSound(name){if(state.muted||state.paused)return;const audio=getHorrorSound(name);audio.pause();audio.currentTime=0;audio.play().catch(()=>{})}
   function resetHorrorAudio(){horrorPhase=0;nextBirdAt=performance.now()+7000+Math.random()*7000;stopHorrorSounds()}
   function syncStageMusic(index){playMusic(`stage-${index}`,getStageMusic(index))}
@@ -463,11 +463,18 @@
     const fill=$('questionTimerFill');stopQuestionTimer();fill.style.width='100%';
     if(fill.animate)fill.animate([{width:'100%'},{width:'0%'}],{duration,easing:'linear',fill:'forwards'});
   }
+  let preferredJapaneseVoice=null;
+  function selectJapaneseVoice(){
+    if(!('speechSynthesis'in window))return;
+    const voices=speechSynthesis.getVoices(),japanese=voices.filter(voice=>voice.lang.toLowerCase().startsWith('ja'));
+    preferredJapaneseVoice=japanese.find(voice=>voice.localService)||japanese[0]||null;
+  }
+  selectJapaneseVoice();if('speechSynthesis'in window)speechSynthesis.addEventListener?.('voiceschanged',selectJapaneseVoice);
   function speak(kana){
     if(state.muted)return;
     if('speechSynthesis' in window){
       speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(kana);
-      u.lang='ja-JP';u.rate=.72;u.pitch=1.08;u.volume=1;
+      u.lang='ja-JP';u.rate=.58;u.pitch=1;u.volume=1;if(preferredJapaneseVoice)u.voice=preferredJapaneseVoice;
       u.onstart=()=>{state.voiceSpeaking=true;duckMusic(true)};
       u.onend=u.onerror=()=>{state.voiceSpeaking=false;duckMusic(false)};
       speechSynthesis.speak(u);
@@ -744,9 +751,9 @@
   $('handHelpBtn').addEventListener('click',()=>{const open=$('handHelp').classList.toggle('active');$('handHelpBtn').setAttribute('aria-expanded',String(open))});
   $('tutorialBack').addEventListener('click',previousTutorialStep);$('tutorialNext').addEventListener('click',nextTutorialStep);
   ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTutorialBtn').addEventListener('click',()=>openTutorial(true));$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
-  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',showTitle);ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});damageAudio.pause();damageAudio.currentTime=0;stopTimerSound();if(activeMusic)activeMusic.pause();stopHorrorSounds()}else if(!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause());damageAudio.pause();stopTimerSound();if(activeMusic)activeMusic.pause();stopHorrorSounds()}else if(!state.muted&&!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});
+  $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',showTitle);ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.musicMuted=!state.musicMuted;ui.mute.textContent=state.musicMuted?'🔇':'🔊';ui.mute.setAttribute('aria-label',state.musicMuted?'BGM ON':'BGM OFF');if(state.musicMuted){if(activeMusic)activeMusic.pause()}else if(!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause());damageAudio.pause();stopTimerSound();if(activeMusic)activeMusic.pause();stopHorrorSounds()}else if(!state.musicMuted&&!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});
   function unlockTitleMusic(){
-    if(!ui.title.classList.contains('active')||state.muted)return;
+    if(!ui.title.classList.contains('active')||state.musicMuted)return;
     const audio=getTitleMusic();
     if(activeMusic!==audio)playMusic('title',audio);
     else audio.play().catch(()=>{});
