@@ -326,7 +326,7 @@
   };
   const horrorVolumes={bird:.36,appear:.43,coming:.45,up:.475},horrorSounds={};
   let activeMusic=null,activeMusicKey='',horrorPhase=0,nextBirdAt=0;
-  const state = {running:false,paused:false,tutorialActive:false,starting:false,transitioning:false,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,musicMuted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
+  const state = {running:false,paused:false,tutorialActive:false,starting:false,transitioning:false,transitionPending:null,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:0,muted:false,musicMuted:false,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],kanaDeck:[],shownCounts:new Map(),lastKana:'',last:0,scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]};
   const ctx = ui.canvas.getContext('2d'); let W=390,H=520,dpr=1,raf=0,timers=[];
   let audioContext=null;
   const JUMP_VELOCITY=-680,OBSTACLE_SPAWN_AHEAD=105,OBSTACLE_CONTACT_AHEAD=25,AIR_OBSTACLE_HEIGHT=195;
@@ -388,7 +388,7 @@
   }
   function beginStageTransition(nextIndex){
     if(state.transitioning||nextIndex>=stages.length)return;
-    state.transitioning=true;state.stageTransition={nextIndex,start:performance.now(),duration:2300};state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
+    state.transitioning=true;state.transitionPending=null;state.stageTransition={nextIndex,start:performance.now(),duration:2300};state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();
     ui.jump.disabled=true;ui.replay.disabled=true;ui.pause.disabled=true;ui.count.textContent='';ui.kana.textContent='—';state.obstacle=null;state.phase='idle';state.question=null;state.playerY=0;state.playerV=0;
     if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;duckMusic(false);
     if(activeMusic)activeMusic.pause();
@@ -477,8 +477,8 @@
   function speak(kana){
     if(state.muted)return;
     if('speechSynthesis' in window){
-      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(kana);
-      u.lang='ja-JP';u.rate=.58;u.pitch=1;u.volume=1;if(preferredJapaneseVoice)u.voice=preferredJapaneseVoice;
+      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${kana}、${kana}`);
+      u.lang='ja-JP';u.rate=.52;u.pitch=.96;u.volume=1;if(preferredJapaneseVoice)u.voice=preferredJapaneseVoice;
       u.onstart=()=>{state.voiceSpeaking=true;duckMusic(true)};
       u.onend=u.onerror=()=>{state.voiceSpeaking=false;duckMusic(false)};
       speechSynthesis.speak(u);
@@ -509,10 +509,20 @@
     state.matchDeck=deck;
   }
   function nextMatch(){if(!state.matchDeck.length)refillMatchDeck();const match=state.matchDeck.shift();state.matchHistory.push(match);state.matchHistory=state.matchHistory.slice(-2);return match}
+  function refillKanaDeck(){
+    const deck=[...kanaSet];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
+    if(deck.length>1&&deck[0]===state.lastKana)[deck[0],deck[1]]=[deck[1],deck[0]];state.kanaDeck=deck;
+  }
+  function nextKana(){if(!state.kanaDeck.length)refillKanaDeck();const kana=state.kanaDeck.shift();state.lastKana=kana;return kana}
+  function balancedDifferentKana(audio){
+    let least=Infinity,candidates=[];
+    kanaSet.forEach(kana=>{if(kana===audio)return;const count=state.shownCounts.get(kana)||0;if(count<least){least=count;candidates=[kana]}else if(count===least)candidates.push(kana)});
+    return candidates[Math.floor(Math.random()*candidates.length)];
+  }
   function question(){
-    if(!state.running||state.paused||state.transitioning||state.hearts<=0)return;
-    state.token++;const token=state.token,audio=kanaSet[Math.floor(Math.random()*kanaSet.length)],match=nextMatch();let shown=audio;
-    while(!match&&shown===audio)shown=kanaSet[Math.floor(Math.random()*kanaSet.length)];
+    if(!state.running||state.paused||state.transitioning||state.transitionPending!==null||state.hearts<=0)return;
+    state.token++;const token=state.token,audio=nextKana(),match=nextMatch(),shown=match?audio:balancedDifferentKana(audio);
+    state.shownCounts.set(shown,(state.shownCounts.get(shown)||0)+1);
     state.question={audio,shown,match};state.practiced.set(audio,(state.practiced.get(audio)||0)+1);state.accepting=true;state.phase='question';state.phaseT=0;state.obstacle=null;
     setReady(false);ui.jump.disabled=false;ui.replay.disabled=false;ui.kana.textContent=shown;ui.count.textContent='';setStatus(tr().listen);speak(audio);playTimerSound();startQuestionTimer(3000);
     later(()=>{if(!state.running||state.paused||token!==state.token)return;stopTimerSound();stopQuestionTimer();state.accepting=false;ui.jump.disabled=true;ui.replay.disabled=true;resolve(token)},3000);
@@ -539,7 +549,7 @@
       state.hearts--;state.combo=0;startHitEffect();setStatus(tr().miss,'bad');
       setCharacterAnimation(state.hearts<=0?'defeated':'hit',state.hearts<=0?950:680,{form:previousForm});
     }
-    updateHud();if(state.hearts<=0){later(endRun,900)}else{later(question,900)}
+    updateHud();if(state.hearts<=0){later(endRun,900)}else if(state.transitionPending!==null){const nextIndex=state.transitionPending;later(()=>beginStageTransition(nextIndex),350)}else{later(question,900)}
   }
   function burst(x,y,color){for(let i=0;i<28;i++)state.particles.push({x,y,vx:(Math.random()-.5)*280,vy:(Math.random()-.7)*260,life:1,color})}
   function toggleReady(){if(state.running&&!state.paused&&state.accepting)setReady(!state.jumpReady)}
@@ -573,7 +583,7 @@
   function previousTutorialStep(){if(tutorialStep>0){tutorialStep--;renderTutorialStep()}}
 
   function openPause(){
-    if(!state.running||state.paused||state.tutorialActive||state.starting||state.transitioning)return;
+    if(!state.running||state.paused||state.tutorialActive||state.starting||state.transitioning||state.transitionPending!==null)return;
     state.paused=true;state.accepting=false;state.token++;clearTimers();setReady(false);stopTimerSound();stopQuestionTimer();ui.jump.disabled=true;ui.replay.disabled=true;ui.count.textContent='';
     if('speechSynthesis'in window)speechSynthesis.cancel();state.voiceSpeaking=false;if(activeMusic)activeMusic.pause();stopHorrorSounds();cancelAnimationFrame(raf);ui.pauseMenu.classList.add('active');$('resumeBtn').focus();
   }
@@ -583,15 +593,15 @@
     if(state.hearts<=0)endRun();else later(question,350);
   }
   function returnToTitle(){
-    state.running=false;state.paused=false;state.tutorialActive=false;state.starting=false;state.transitioning=false;state.stageTransition=null;state.accepting=false;state.token++;clearTimers();cancelAnimationFrame(raf);stopTimerSound();stopQuestionTimer();
+    state.running=false;state.paused=false;state.tutorialActive=false;state.starting=false;state.transitioning=false;state.transitionPending=null;state.stageTransition=null;state.accepting=false;state.token++;clearTimers();cancelAnimationFrame(raf);stopTimerSound();stopQuestionTimer();
     if('speechSynthesis'in window)speechSynthesis.cancel();stopHorrorSounds();ui.pauseMenu.classList.remove('active');$('tutorial').classList.remove('active');showTitle();
   }
   function giveUp(){if(!state.running)return;state.paused=false;ui.pauseMenu.classList.remove('active');endRun()}
 
-  function startRun(){clearTimers();ensureAudioContext();unlockTimerSound();correctAudio.forEach(audio=>{if(audio){audio.pause();audio.currentTime=0}});damageAudio.pause();damageAudio.currentTime=0;stopTimerSound();stopQuestionTimer();resetHorrorAudio();loadStageObstacleImages(0);if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialShownThisSession;Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,starting:true,transitioning:false,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});syncStageMusic(0);$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=true;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(beginStartCountdown,350)}
+  function startRun(){clearTimers();ensureAudioContext();unlockTimerSound();correctAudio.forEach(audio=>{if(audio){audio.pause();audio.currentTime=0}});damageAudio.pause();damageAudio.currentTime=0;stopTimerSound();stopQuestionTimer();resetHorrorAudio();loadStageObstacleImages(0);if('speechSynthesis'in window)speechSynthesis.cancel();const showTutorial=!tutorialShownThisSession;Object.assign(state,{running:true,paused:false,tutorialActive:showTutorial,starting:true,transitioning:false,transitionPending:null,stageTransition:null,hearts:3,combo:0,maxCombo:0,score:0,distance:0,answered:0,correct:0,jumpReady:false,accepting:false,question:null,token:state.token+1,voiceSpeaking:false,phase:'idle',phaseT:0,obstacle:null,stage:0,practiced:new Map(),reviewHistory:[],matchDeck:[],matchHistory:[],kanaDeck:[],shownCounts:new Map(),lastKana:'',last:performance.now(),scroll:0,playerY:0,playerV:0,wasAirborne:false,characterAnim:null,hitEffect:null,shake:0,particles:[]});syncStageMusic(0);$('tutorial').classList.remove('active');ui.pauseMenu.classList.remove('active');ui.pause.disabled=true;show('game');resize();updateHud();ui.kana.textContent='—';ui.count.textContent='';ui.jump.disabled=true;ui.replay.disabled=true;setReady(false);setStatus(tr().ready);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);if(showTutorial)openTutorial();else later(beginStartCountdown,350)}
   function endRun(){
     if(!state.running)return;
-    state.running=false;state.paused=false;state.tutorialActive=false;state.starting=false;state.transitioning=false;state.stageTransition=null;state.accepting=false;state.token++;clearTimers();stopTimerSound();stopQuestionTimer();
+    state.running=false;state.paused=false;state.tutorialActive=false;state.starting=false;state.transitioning=false;state.transitionPending=null;state.stageTransition=null;state.accepting=false;state.token++;clearTimers();stopTimerSound();stopQuestionTimer();
     if('speechSynthesis'in window)speechSynthesis.cancel();if(activeMusic){activeMusic.pause();activeMusic.currentTime=0}activeMusic=null;activeMusicKey='';stopHorrorSounds();cancelAnimationFrame(raf);ui.pauseMenu.classList.remove('active');
     const text=tr(),resultBackground=stageBackgroundFile(stageIndex());
     ui.result.style.backgroundImage=`linear-gradient(rgba(18,13,30,.42),rgba(18,13,30,.7)),url("asset/background/${resultBackground}")`;
@@ -740,10 +750,14 @@
       else if(now<state.hitEffect.slowEnd)timeScale=.18;
     }
     updateStageTransition(now);
-    let step=(state.tutorialActive||state.starting||state.transitioning)?0:dt*timeScale;state.phaseT+=step;const p=power();
+    let step=(state.tutorialActive||state.starting||state.transitioning)?0:dt*timeScale;state.phaseT+=step;const p=power();let advanceDistance=state.transitionPending===null;
     const currentStage=stageIndex(),nextStage=stages[currentStage+1];
-    if(step>0&&nextStage&&state.distance+p.speed*step*.34>=nextStage.at){state.distance=nextStage.at-.01;beginStageTransition(currentStage+1);step=0}
-    state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
+    if(step>0&&nextStage&&state.distance+p.speed*step*.34>=nextStage.at){
+      state.distance=nextStage.at-.01;advanceDistance=false;
+      if(state.accepting||(state.obstacle&&!state.obstacle.resolved))state.transitionPending=currentStage+1;
+      else{beginStageTransition(currentStage+1);step=0}
+    }
+    if(advanceDistance)state.distance+=p.speed*step*.34;state.scroll+=p.speed*step;state.playerV+=1450*step;state.playerY+=state.playerV*step;
     const jumpCeiling=-Math.max(34,H*.32);if(state.playerY<jumpCeiling){state.playerY=jumpCeiling;if(state.playerV<0)state.playerV=0}if(state.playerY>=0){state.playerY=0;state.playerV=0;if(state.wasAirborne){state.wasAirborne=false;if(!state.characterAnim)setCharacterAnimation('land',260)}}
     drawWorld(step);updateHud();updateHorrorAudio(now,stageIndex());raf=requestAnimationFrame(loop);
   }
