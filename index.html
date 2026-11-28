@@ -330,7 +330,7 @@
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
   function makeMusic(src,volume){const audio=new Audio();audio.preload='none';audio.loop=true;audio.volume=volume;audio.src=src;return audio}
-  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.4:.25))}
+  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.8:.18))}
   function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/BGM/title.mp3',.25))}
   function getHorrorSound(name){
     if(horrorSounds[name])return horrorSounds[name];
@@ -720,7 +720,15 @@
   $('tutorialBack').addEventListener('click',previousTutorialStep);$('tutorialNext').addEventListener('click',nextTutorialStep);
   ui.pause.addEventListener('click',openPause);$('resumeBtn').addEventListener('click',resumeRun);$('pauseTutorialBtn').addEventListener('click',()=>openTutorial(true));$('pauseTitleBtn').addEventListener('click',returnToTitle);$('giveUpBtn').addEventListener('click',giveUp);
   $('startBtn').addEventListener('click',startRun);$('retryBtn').addEventListener('click',startRun);$('titleBtn').addEventListener('click',showTitle);ui.jump.addEventListener('click',toggleReady);ui.canvas.addEventListener('pointerdown',toggleReady);ui.replay.addEventListener('click',()=>state.question&&state.accepting&&speak(state.question.audio));ui.mute.addEventListener('click',()=>{state.muted=!state.muted;ui.mute.textContent=state.muted?'🔇':'🔊';if(state.muted){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>{audio.pause();audio.currentTime=0});damageAudio.pause();damageAudio.currentTime=0;stopTimerSound();if(activeMusic)activeMusic.pause();stopHorrorSounds()}else if(!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});window.addEventListener('keydown',e=>{if(['Space','ArrowUp'].includes(e.code)){e.preventDefault();toggleReady()}});document.addEventListener('visibilitychange',()=>{if(document.hidden){state.voiceSpeaking=false;if('speechSynthesis'in window)speechSynthesis.cancel();correctAudio.forEach(audio=>audio.pause());damageAudio.pause();stopTimerSound();if(activeMusic)activeMusic.pause();stopHorrorSounds()}else if(!state.muted&&!state.paused){if(state.running)syncStageMusic(stageIndex());else if(ui.title.classList.contains('active'))showTitle()}});
-  document.addEventListener('pointerdown',()=>{if(ui.title.classList.contains('active')&&!state.muted)showTitle()},{once:true});
+  function unlockTitleMusic(){
+    if(!ui.title.classList.contains('active')||state.muted)return;
+    const audio=getTitleMusic();
+    if(activeMusic!==audio)playMusic('title',audio);
+    else audio.play().catch(()=>{});
+  }
+  document.addEventListener('pointerdown',unlockTitleMusic,{passive:true});
+  document.addEventListener('touchstart',unlockTitleMusic,{passive:true});
+  document.addEventListener('keydown',unlockTitleMusic);
   showTitle();
 })();
 </script>
