@@ -715,7 +715,7 @@
     const anim=state.characterAnim;
     let form=characterForm(),frame;
     if(state.stageTransition){
-      form='lux';frame=transitionProgress<.48?CHARACTER_FRAMES.float:CHARACTER_FRAMES.floatDash;
+      form=characterForm();frame=transitionProgress<.48?CHARACTER_FRAMES.float:CHARACTER_FRAMES.floatDash;
     }else if(anim?.type==='power'){
       const progress=(now-anim.start)/(anim.end-anim.start);
       form=progress<.52?anim.from:anim.to;
