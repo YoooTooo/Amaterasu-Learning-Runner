@@ -474,11 +474,11 @@
     preferredJapaneseVoice=japanese.find(voice=>voice.localService)||japanese[0]||null;
   }
   selectJapaneseVoice();if('speechSynthesis'in window)speechSynthesis.addEventListener?.('voiceschanged',selectJapaneseVoice);
-  function speak(kana){
+  function speak(kana,repeat=true){
     if(state.muted)return;
     if('speechSynthesis' in window){
       const speechKana=({は:'ハ',へ:'ヘ',を:'ヲ'})[kana]||kana;
-      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${speechKana}、${speechKana}`);
+      speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(repeat?`${speechKana}、${speechKana}`:speechKana);
       u.lang='ja-JP';u.rate=.52;u.pitch=.96;u.volume=1;if(preferredJapaneseVoice)u.voice=preferredJapaneseVoice;
       u.onstart=()=>{state.voiceSpeaking=true;duckMusic(true)};
       u.onend=u.onerror=()=>{state.voiceSpeaking=false;duckMusic(false)};
@@ -610,7 +610,7 @@
     $('resultAccuracy').textContent=(state.answered?state.correct/state.answered*100:0).toFixed(1)+'%';$('resultAnswered').textContent=text.answers(state.answered);
     $('resultMessage').textContent=state.maxCombo>=20?text.messages[2]:state.maxCombo>=3?text.messages[1]:text.messages[0];
     const list=$('kanaList');list.innerHTML='';
-    state.reviewHistory.forEach(({kana,ok})=>{const e=document.createElement('button'),status=reviewStatusUi[titleLanguage][ok?'correct':'wrong'];e.type='button';e.className=`kana-tag ${ok?'correct':'wrong'}`;e.textContent=kana;e.setAttribute('aria-label',`${kana}・${status}・${reviewUi[titleLanguage]}`);e.addEventListener('click',()=>speak(kana));list.appendChild(e)});
+    state.reviewHistory.forEach(({kana,ok})=>{const e=document.createElement('button'),status=reviewStatusUi[titleLanguage][ok?'correct':'wrong'];e.type='button';e.className=`kana-tag ${ok?'correct':'wrong'}`;e.textContent=kana;e.setAttribute('aria-label',`${kana}・${status}・${reviewUi[titleLanguage]}`);e.addEventListener('click',()=>speak(kana,false));list.appendChild(e)});
     $('learningTip').textContent=text.tip(state.correct);show('result');
   }
 
