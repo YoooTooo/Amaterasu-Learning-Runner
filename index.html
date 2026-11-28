@@ -320,6 +320,7 @@
   const timerAudio=new Audio('asset/audio/SE/timer.mp3');timerAudio.preload='auto';timerAudio.volume=.29;
   const jumpAudio=new Audio('asset/audio/SE/jump.mp3');jumpAudio.preload='auto';jumpAudio.volume=.45;
   const landingAudio=new Audio('asset/audio/SE/landing.mp3');landingAudio.preload='auto';landingAudio.volume=.45;
+  const clickAudio=new Audio('asset/audio/SE/click.mp3');clickAudio.preload='auto';clickAudio.volume=.35;
   const bgmSources=['stage1.mp3','stage2.mp3','stage3.mp3','stage4.mp3','stage5/fuurin.mp3','stage6.mp3','stage7.mp3','stage8.mp3'];
   const bgmTracks=new Array(bgmSources.length);
   let titleBgm=null;
@@ -790,6 +791,7 @@
   document.addEventListener('pointerdown',unlockTitleMusic,{passive:true});
   document.addEventListener('touchstart',unlockTitleMusic,{passive:true});
   document.addEventListener('keydown',unlockTitleMusic);
+  document.addEventListener('click',event=>{const button=event.target instanceof Element?event.target.closest('button'):null;if(button&&!button.disabled)playMovementSound(clickAudio)});
   showTitle();
 })();
 </script>
