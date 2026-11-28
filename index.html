@@ -335,11 +335,11 @@
 
   function show(which){[ui.title,ui.game,ui.result].forEach(x=>x.classList.remove('active'));ui[which].classList.add('active')}
   function makeMusic(src,volume){const audio=new Audio();audio.preload='none';audio.loop=true;audio.normalVolume=volume;audio.volume=volume;audio.src=src;return audio}
-  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/BGM/${bgmSources[index]}`,index===4?.4:.05))}
-  function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/BGM/title.mp3',.125))}
+  function getStageMusic(index){return bgmTracks[index]||(bgmTracks[index]=makeMusic(`asset/audio/BGM/${bgmSources[index]}`,index===4?.4:.05))}
+  function getTitleMusic(){return titleBgm||(titleBgm=makeMusic('asset/audio/BGM/title.mp3',.125))}
   function getHorrorSound(name){
     if(horrorSounds[name])return horrorSounds[name];
-    const audio=new Audio();audio.preload='none';audio.volume=horrorVolumes[name];audio.src=`asset/BGM/stage5/${horrorSources[name]}`;
+    const audio=new Audio();audio.preload='none';audio.volume=horrorVolumes[name];audio.src=`asset/audio/BGM/stage5/${horrorSources[name]}`;
     return horrorSounds[name]=audio;
   }
   function stopHorrorSounds(){Object.values(horrorSounds).forEach(audio=>{audio.pause();audio.currentTime=0})}
